@@ -6,6 +6,8 @@
 let currentContent = null;
 let hoveredNodeId = null;
 let activeNodeId = null;
+let selectedNodePath = null;
+let isDragging = false;
 let startTime = Date.now();
 let externalData = {};
 let actionLog = [];
@@ -320,6 +322,173 @@ function transcribir(data, container, path = 'pagina', context = {}) {
 }
 
 /**
+ * CANVAS OVERLAY SYSTEM
+ */
+function updateCanvasOverlay() {
+    if (isDragging) return;
+
+    let overlay = document.getElementById('nexus-canvas-overlay');
+    if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.id = 'nexus-canvas-overlay';
+        overlay.style.cssText = 'position:fixed; inset:0; pointer-events:none; z-index:999999;';
+        document.body.appendChild(overlay);
+
+        window.addEventListener('mousedown', startCanvasDrag);
+        window.addEventListener('mousemove', handleCanvasDrag);
+        window.addEventListener('mouseup', endCanvasDrag);
+        window.addEventListener('dblclick', handleCanvasDblClick);
+        window.addEventListener('click', handleCanvasClick);
+    }
+
+    if (!selectedNodePath) {
+        overlay.style.display = 'none';
+        return;
+    }
+    overlay.style.display = 'block';
+
+    const targetId = selectedNodePath ? `node-pagina-${selectedNodePath.replace(/\./g, '-')}` : 'node-pagina';
+    const el = document.getElementById(targetId);
+    if (!el) {
+        overlay.style.display = 'none';
+        return;
+    }
+
+    const rect = el.getBoundingClientRect();
+    const style = window.getComputedStyle(el);
+
+    const mt = parseFloat(style.marginTop) || 0;
+    const mb = parseFloat(style.marginBottom) || 0;
+    const ml = parseFloat(style.marginLeft) || 0;
+    const mr = parseFloat(style.marginRight) || 0;
+
+    const pt = parseFloat(style.paddingTop) || 0;
+    const pb = parseFloat(style.paddingBottom) || 0;
+    const pl = parseFloat(style.paddingLeft) || 0;
+    const pr = parseFloat(style.paddingRight) || 0;
+
+    // Use surgical updates to prevent detachment flicker
+    let box = document.getElementById('canvas-selection-box');
+    if (!box || box.dataset.path !== selectedNodePath) {
+        overlay.innerHTML = `
+            <div id="canvas-selection-box" data-path="${selectedNodePath}" style="position:absolute; border:1px solid #00f0ff; box-shadow:0 0 10px rgba(0,240,255,0.3); pointer-events:auto;">
+                <div id="canvas-label" style="position:absolute; top:-20px; left:0; background:#00f0ff; color:#000; font-size:10px; font-weight:bold; padding:2px 6px; white-space:nowrap; cursor:move;">
+                    ${selectedNodePath.split('.').pop()}
+                </div>
+
+                <!-- Quick Action Bar -->
+            <div id="canvas-actions" style="position:absolute; bottom:-35px; left:50%; transform:translateX(-50%); background:#1a1a20; border:1px solid #00f0ff; border-radius:4px; display:flex; gap:4px; padding:4px; box-shadow:0 5px 25px rgba(0,0,0,0.8); white-space:nowrap;">
+                <button class="canvas-action" data-action="glass" title="Glass Effect" style="background:#222; border:1px solid #444; color:#fff; cursor:pointer; padding:4px 8px; font-size:12px; border-radius:3px;">💎</button>
+                <button class="canvas-action" data-action="glow" title="Neon Glow" style="background:#222; border:1px solid #444; color:#fff; cursor:pointer; padding:4px 8px; font-size:12px; border-radius:3px;">✨</button>
+                <button class="canvas-action" data-action="float" title="Float Animation" style="background:#222; border:1px solid #444; color:#fff; cursor:pointer; padding:4px 8px; font-size:12px; border-radius:3px;">☁️</button>
+                <button class="canvas-action" data-action="pulse" title="Pulse Animation" style="background:#222; border:1px solid #444; color:#fff; cursor:pointer; padding:4px 8px; font-size:12px; border-radius:3px;">💓</button>
+                <button class="canvas-action" data-action="click" title="Click Toggle Interaction" style="background:#222; border:1px solid #444; color:#fff; cursor:pointer; padding:4px 8px; font-size:12px; border-radius:3px;">🖱️</button>
+                <div style="width:1px; background:#444; margin:0 4px;"></div>
+                <button class="canvas-action" data-action="duplicate" title="Duplicate" style="background:#222; border:1px solid #444; color:#fff; cursor:pointer; padding:4px 8px; font-size:12px; border-radius:3px;">⧉</button>
+                <button class="canvas-action" data-action="delete" title="Delete" style="background:#222; border:1px solid #444; color:#ff4a4a; cursor:pointer; padding:4px 8px; font-size:12px; border-radius:3px;">✕</button>
+                </div>
+
+                <div class="resizer br" data-type="br" style="position:absolute; right:-4px; bottom:-4px; width:8px; height:8px; background:#fff; border:1px solid #00f0ff; cursor:nwse-resize;"></div>
+                <div class="resizer r" data-type="r" style="position:absolute; right:-4px; top:50%; margin-top:-10px; width:4px; height:20px; background:#fff; border:1px solid #00f0ff; cursor:ew-resize;"></div>
+                <div class="resizer b" data-type="b" style="position:absolute; bottom:-4px; left:50%; margin-left:-10px; width:20px; height:4px; background:#fff; border:1px solid #00f0ff; cursor:ns-resize;"></div>
+            </div>
+            <div id="canvas-margin-overlay" style="position:absolute; border:1px solid rgba(217, 119, 6, 0.3); background:rgba(217, 119, 6, 0.05);"></div>
+            <div id="canvas-padding-overlay" style="position:absolute; border:1px dashed rgba(45, 138, 78, 0.3); background:rgba(45, 138, 78, 0.05);"></div>
+        `;
+        box = document.getElementById('canvas-selection-box');
+    }
+
+    box.style.left = rect.left + 'px';
+    box.style.top = rect.top + 'px';
+    box.style.width = rect.width + 'px';
+    box.style.height = rect.height + 'px';
+
+    const marginOverlay = document.getElementById('canvas-margin-overlay');
+    marginOverlay.style.left = (rect.left - ml) + 'px';
+    marginOverlay.style.top = (rect.top - mt) + 'px';
+    marginOverlay.style.width = (rect.width + ml + mr) + 'px';
+    marginOverlay.style.height = (rect.height + mt + mb) + 'px';
+
+    const paddingOverlay = document.getElementById('canvas-padding-overlay');
+    paddingOverlay.style.left = (rect.left + pl) + 'px';
+    paddingOverlay.style.top = (rect.top + pt) + 'px';
+    paddingOverlay.style.width = Math.max(0, rect.width - pl - pr) + 'px';
+    paddingOverlay.style.height = Math.max(0, rect.height - pt - pb) + 'px';
+}
+
+let dragTarget = null;
+let startX, startY, startW, startH;
+
+function startCanvasDrag(e) {
+    const handle = e.target.closest('.resizer');
+    if (!handle) return;
+    isDragging = true;
+    dragTarget = handle.dataset.type;
+    startX = e.clientX; startY = e.clientY;
+    const box = document.getElementById('canvas-selection-box');
+    startW = box.offsetWidth; startH = box.offsetHeight;
+    e.preventDefault();
+}
+
+function handleCanvasDrag(e) {
+    if (!isDragging) return;
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+    const box = document.getElementById('canvas-selection-box');
+    const el = document.getElementById(`node-${selectedNodePath.replace(/\./g, '-')}`);
+    if (dragTarget === 'r' || dragTarget === 'br') {
+        const newW = startW + dx;
+        box.style.width = newW + 'px';
+        if (el) el.style.width = newW + 'px';
+    }
+    if (dragTarget === 'b' || dragTarget === 'br') {
+        const newH = startH + dy;
+        box.style.height = newH + 'px';
+        if (el) el.style.height = newH + 'px';
+    }
+}
+
+function endCanvasDrag(e) {
+    if (!isDragging) return;
+    const box = document.getElementById('canvas-selection-box');
+    window.parent.postMessage({
+        type: 'canvas-update',
+        path: selectedNodePath,
+        updates: { width: box.offsetWidth + 'px', height: box.offsetHeight + 'px' }
+    }, '*');
+    isDragging = false;
+    dragTarget = null;
+}
+
+function handleCanvasDblClick(e) {
+    const target = e.target.closest('[id^="node-"]');
+    if (!target) return;
+    const path = target.id.replace('node-', '').replace(/-/g, '.');
+    window.parent.postMessage({ type: 'request-text-edit', path: path }, '*');
+}
+
+function handleCanvasClick(e) {
+    const btn = e.target.closest('.canvas-action');
+    if (!btn) return;
+
+    // Visual Feedback
+    const originalText = btn.textContent;
+    btn.textContent = '✅';
+    setTimeout(() => btn.textContent = originalText, 1000);
+
+    // Flash the selection box
+    const box = document.getElementById('canvas-selection-box');
+    if (box) {
+        box.style.transition = 'background 0.2s';
+        box.style.background = 'rgba(0, 240, 255, 0.2)';
+        setTimeout(() => box.style.background = 'transparent', 300);
+    }
+
+    const action = btn.dataset.action;
+    window.parent.postMessage({ type: 'canvas-apply-preset', path: selectedNodePath, action: action }, '*');
+}
+
+/**
  * RUNTIME
  */
 let lastStateHash = '';
@@ -333,6 +502,7 @@ function mainLoop() {
     if (currentContent) {
         // Fast path for high-frequency updates (only updates dynamic properties)
         updateHighFrequencyProps(currentContent, 'pagina');
+        updateCanvasOverlay();
 
         // Full transcription only if structure or base values changed
         // We use a lighter "fingerprint" than full JSON.stringify
@@ -405,6 +575,7 @@ function updateGlobalStyles(data) {
 
 window.addEventListener('message', (e) => {
     if (e.data.type === 'update-content') currentContent = e.data.content;
+    if (e.data.type === 'set-selected') selectedNodePath = e.data.path;
     if (e.data.type === 'get-rect') {
         const el = document.getElementById(`node-${e.data.path.replace(/\./g, '-')}`);
         if (el) {

@@ -729,6 +729,43 @@
 
         const RESERVED = { nombre: 1, hover: 1, active: 1, responsive: 1, variables: 1, texto: 1, tagName: 1, animations: 1, _seeds: 1, _template: 1, props: 1, onMount: 1, onUpdate: 1, onClick: 1, onMouseEnter: 1, onMouseLeave: 1, _actions: 1, _seed: 1, _fetch: 1 };
 
+        const TACTILE_BEHAVIORS = {
+            'glass': {
+                "background": "rgba(255, 255, 255, 0.05)",
+                "backdrop-filter": "blur(20px)",
+                "border": "1px solid rgba(255, 255, 255, 0.1)",
+                "border-radius": "16px",
+                "box-shadow": "0 10px 30px rgba(0,0,0,0.2)"
+            },
+            'glow': {
+                "color": "#00f0ff",
+                "text-shadow": "0 0 10px rgba(0, 240, 255, 0.8), 0 0 20px rgba(0, 240, 255, 0.4)",
+                "border-color": "#00f0ff",
+                "box-shadow": "0 0 20px rgba(0, 240, 255, 0.3)"
+            },
+            'float': {
+                "transform": "translateY(math(sin(time * 2) * 10)px)"
+            },
+            'pulse': {
+                "transform": "scale(math(1 + sin(time * 4) * 0.05))"
+            },
+            'click': {
+                "onClick": [
+                    { "type": "toggle", "path": "variables.state.active" }
+                ],
+                "cursor": "pointer"
+            },
+            'tilt': {
+                "transition": "transform 0.1s ease-out",
+                "transform": "rotateX(math(my * 20 - 10)deg) rotateY(math(mx * 20 - 10)deg)"
+            },
+            'hover-grow': {
+                "transition": "transform 0.3s ease",
+                "hover": { "transform": "scale(1.05)" }
+            },
+            'rounded': { "border-radius": "1000px" }
+        };
+
         // Professional Native CSS Property Groups
         const NATIVE_GROUPS = {
             'Identidad': ['nombre', 'tagName', 'texto', 'src', 'href'],
@@ -826,6 +863,27 @@
                     }
                 };
             }
+            if (e.data.type === 'canvas-apply-preset') {
+                const { path, action } = e.data;
+                if (action === 'delete') { deleteNode(path); return; }
+                if (action === 'duplicate') { duplicateNode(path); return; }
+
+                const obj = getObjPath(contentData, path);
+                const preset = TACTILE_BEHAVIORS[action];
+                if (obj && preset) {
+                    // Deep merge the preset into the object
+                    for (const key in preset) {
+                        if (key === 'hover' || key === 'active') {
+                            obj[key] = { ...(obj[key] || {}), ...preset[key] };
+                        } else if (Array.isArray(preset[key])) {
+                            obj[key] = [...(obj[key] || []), ...preset[key]];
+                        } else {
+                            obj[key] = preset[key];
+                        }
+                    }
+                    refreshAll();
+                }
+            }
             if (e.data.type === 'sync-data') {
                 document.getElementById('data-inspector').textContent = JSON.stringify(e.data.data.state.variables, null, 2);
                 document.getElementById('env-time').textContent = e.data.data.state.time?.toFixed(1) + 's' || '0s';
@@ -845,12 +903,33 @@
                     audit.innerHTML = e.data.data.actionLog.slice(-50).map(l => `<div>[${new Date(l.time).toLocaleTimeString()}] <span style="color:#fff">${l.type}</span>: ${l.path || l.url || ''} ${l.value || ''}</div>`).reverse().join('');
                 }
             }
-            if (e.data.type === 'select-node') {
+            if (e.data.type === 'select-node' || e.data.type === 'request-text-edit') {
                 selectedPath = e.data.path.replace(/^pagina\./, '').replace(/^pagina$/, '');
                 if (selectedPath === 'pagina') selectedPath = '';
                 renderTree();
                 const obj = getObjPath(contentData, selectedPath);
                 renderProperties(obj, selectedPath);
+
+                if (e.data.type === 'request-text-edit' && obj) {
+                    const newTxt = prompt('Edit text:', obj.texto || '');
+                    if (newTxt !== null) {
+                        obj.texto = newTxt;
+                        refreshAll();
+                    }
+                }
+            }
+            if (e.data.type === 'canvas-update') {
+                const { path, updates } = e.data;
+                const cleanPath = path.replace(/^pagina\./, '').replace(/^pagina$/, '');
+                const obj = getObjPath(contentData, cleanPath);
+                if (obj) {
+                    Object.assign(obj, updates);
+                    renderTree();
+                    renderTokens();
+                    renderTemplates();
+                    updateJsonEditor();
+                    sendToPreview();
+                }
             }
         });
 
@@ -913,6 +992,12 @@
                 selectedPath = path;
                 renderTree();
                 renderProperties(obj, path);
+
+                // Sync to canvas
+                const iframe = document.getElementById('preview');
+                if (iframe && iframe.contentWindow) {
+                    iframe.contentWindow.postMessage({ type: 'set-selected', path: selectedPath }, '*');
+                }
             };
 
             container.appendChild(label);
@@ -1501,7 +1586,12 @@
             const key = parts.pop();
             const parentPath = parts.join('.');
             const parent = getObjPath(contentData, parentPath);
-            const newKey = key + '_copy';
+            let newKey = key + '_copy';
+            let i = 1;
+            while (parent[newKey]) {
+                newKey = key + '_copy_' + i;
+                i++;
+            }
             parent[newKey] = JSON.parse(JSON.stringify(parent[key]));
             renderTree();
             sendToPreview();
