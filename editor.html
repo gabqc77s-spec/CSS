@@ -7,13 +7,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #050505;
-            --sidebar: #0f0f12;
-            --panel: #16161a;
-            --accent: #4ade80;
-            --border: rgba(255,255,255,0.06);
-            --text: #e0e0e0;
-            --text-dim: #888;
+            --bg: #020203;
+            --sidebar: #0a0a0c;
+            --panel: #111114;
+            --accent: #00f0ff;
+            --accent-glow: rgba(0, 240, 255, 0.3);
+            --border: rgba(255,255,255,0.08);
+            --text: #ffffff;
+            --text-dim: #666;
+            --glass: rgba(255,255,255,0.02);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -47,20 +49,23 @@
         }
 
         .sidebar-header h1 {
-            font-size: 0.9rem;
-            font-weight: 800;
+            font-size: 1rem;
+            font-weight: 900;
             color: var(--accent);
-            letter-spacing: -0.02em;
+            letter-spacing: 2px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 12px;
+            text-shadow: 0 0 10px var(--accent-glow);
         }
         .sidebar-header h1 span {
             background: var(--accent);
             color: #000;
-            font-size: 0.6rem;
-            padding: 2px 6px;
-            border-radius: 4px;
+            font-size: 0.5rem;
+            padding: 3px 8px;
+            border-radius: 2px;
+            text-shadow: none;
+            letter-spacing: 1px;
         }
 
         .btn-primary {
@@ -100,27 +105,34 @@
         /* ─── Tabs ─── */
         .tabs {
             display: flex;
-            background: rgba(0,0,0,0.2);
+            background: var(--sidebar);
             border-bottom: 1px solid var(--border);
+            padding: 0 10px;
         }
         .tab {
-            flex: 1;
-            padding: 12px;
-            font-size: 0.65rem;
+            padding: 14px 12px;
+            font-size: 0.6rem;
             text-align: center;
             cursor: pointer;
-            opacity: 0.4;
-            transition: all 0.2s;
+            opacity: 0.5;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             text-transform: uppercase;
-            letter-spacing: 0.1em;
-            font-weight: 700;
+            letter-spacing: 0.15em;
+            font-weight: 800;
             border-bottom: 2px solid transparent;
+            position: relative;
         }
         .tab.active {
             opacity: 1;
             color: var(--accent);
-            border-bottom-color: var(--accent);
-            background: rgba(74, 222, 128, 0.05);
+        }
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px; left: 0; right: 0;
+            height: 2px;
+            background: var(--accent);
+            box-shadow: 0 0 10px var(--accent);
         }
 
         .main-content {
@@ -128,17 +140,18 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            background: #050507;
         }
 
         #json-editor {
             flex: 1;
             width: 100%;
             background: #08080a;
-            color: var(--accent);
+            color: #4ade80;
             border: none;
             padding: 24px;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 0.8rem;
+            font-size: 0.7rem;
             line-height: 1.6;
             resize: none;
             outline: none;
@@ -211,11 +224,14 @@
             margin-bottom: 8px;
         }
         .prop-key {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             color: var(--text-dim);
-            width: 130px;
+            width: 120px;
             flex-shrink: 0;
             font-family: 'JetBrains Mono', monospace;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         .prop-input-wrap {
             flex: 1;
@@ -224,16 +240,18 @@
             gap: 8px;
         }
         .input-base {
-            background: rgba(0,0,0,0.3);
+            background: rgba(255,255,255,0.03);
             border: 1px solid var(--border);
             border-radius: 4px;
             color: var(--text);
-            padding: 6px 10px;
+            padding: 8px 12px;
             font-size: 0.75rem;
             width: 100%;
             outline: none;
+            transition: all 0.2s;
         }
-        .input-base:focus { border-color: var(--accent); }
+        .input-base:hover { background: rgba(255,255,255,0.05); }
+        .input-base:focus { border-color: var(--accent); background: rgba(0, 240, 255, 0.05); }
 
         /* ─── Tree Nodes ─── */
         .tree-node { margin-left: 12px; position: relative; }
@@ -254,7 +272,11 @@
             gap: 8px;
         }
         .tree-label:hover { background: rgba(255,255,255,0.03); }
-        .tree-label.selected { background: rgba(74, 222, 128, 0.1); color: var(--accent); }
+        .tree-label.selected {
+            background: rgba(0, 240, 255, 0.1);
+            color: var(--accent);
+            box-shadow: inset 2px 0 0 var(--accent);
+        }
         .tree-icon { font-size: 0.6rem; opacity: 0.3; width: 14px; text-align: center; }
 
         /* ─── Preview ─── */
@@ -268,7 +290,7 @@
             overflow: auto;
         }
         .preview-container {
-            background: #fff;
+            background: #000;
             box-shadow: 0 30px 60px rgba(0,0,0,0.5);
             transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
             position: relative;
@@ -339,6 +361,8 @@
             <div class="tab" data-tab="json">Código</div>
             <div class="tab" data-tab="tokens">Tokens</div>
             <div class="tab" data-tab="lab">Laboratorio</div>
+            <div class="tab" data-tab="templates">Plantillas</div>
+            <div class="tab" data-tab="data">Datos Live</div>
         </div>
 
         <div class="main-content">
@@ -349,15 +373,30 @@
             <div id="tokens-tab" class="tree-panel" style="display:none">
                 <div id="tokens-tree"></div>
             </div>
+            <div id="templates-tab" class="tree-panel" style="display:none">
+                <div id="templates-tree"></div>
+            </div>
+            <div id="data-tab" class="tree-panel" style="display:none">
+                <div class="prop-group">
+                    <div class="prop-group-title">External Data Cache</div>
+                    <pre id="data-inspector" style="font-size: 0.6rem; color: var(--accent); padding: 10px; overflow: auto; max-height: 400px;"></pre>
+                </div>
+            </div>
             <div id="lab-tab" class="tree-panel" style="display:none">
                 <div class="prop-group">
-                    <div class="prop-group-title">Environmental Variables</div>
-                    <div style="font-size: 0.7rem; opacity: 0.6; line-height: 1.6; padding: 10px;">
-                        Usa estas variables en cualquier campo:<br>
-                        <code style="color: var(--accent)">var(--nexus-time)</code><br>
-                        <code style="color: var(--accent)">var(--nexus-scroll)</code><br>
-                        <code style="color: var(--accent)">var(--nexus-mouse-x)</code><br>
-                        <code style="color: var(--accent)">var(--nexus-mouse-y)</code>
+                    <div class="prop-group-title">Environmental State</div>
+                    <div style="font-size: 0.7rem; line-height: 1.6; padding: 10px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                            <span>Time</span>
+                            <code style="color: var(--accent)" id="env-time">0.0s</code>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                            <span>Scroll</span>
+                            <code style="color: var(--accent)" id="env-scroll">0px</code>
+                        </div>
+                        <div style="font-size: 0.6rem; margin-top: 12px; color: var(--text-dim);">
+                            TIP: Use <code style="color:var(--accent)">math()</code> or <code style="color:var(--accent)">$variables</code> for dynamic values.
+                        </div>
                     </div>
                 </div>
                 <div class="prop-group">
@@ -428,10 +467,15 @@
         };
 
         async function init() {
-            const res = await fetch('content.json');
-            contentData = await res.json();
+            if (!contentData) {
+                try {
+                    const res = await fetch('content.json');
+                    if (res.ok) contentData = await res.json();
+                } catch(e) {}
+            }
             renderTree();
             renderTokens();
+            renderTemplates();
             updateJsonEditor();
             sendToPreview();
         }
@@ -440,6 +484,21 @@
             const iframe = document.getElementById('preview');
             iframe.contentWindow.postMessage({ type: 'update-content', content: contentData }, '*');
         }
+
+        window.addEventListener('message', (e) => {
+            if (e.data.type === 'sync-data') {
+                document.getElementById('data-inspector').textContent = JSON.stringify(e.data.data.state.variables, null, 2);
+                document.getElementById('env-time').textContent = e.data.data.state.time?.toFixed(1) + 's' || '0s';
+                document.getElementById('env-scroll').textContent = e.data.data.state.scroll + 'px' || '0px';
+            }
+            if (e.data.type === 'select-node') {
+                selectedPath = e.data.path.replace(/^pagina\./, '').replace(/^pagina$/, '');
+                if (selectedPath === 'pagina') selectedPath = '';
+                renderTree();
+                const obj = getObjPath(contentData, selectedPath);
+                renderProperties(obj, selectedPath);
+            }
+        });
 
         function updateJsonEditor() {
             document.getElementById('json-editor').value = JSON.stringify(contentData, null, 4);
@@ -452,13 +511,14 @@
         }
 
         function buildNode(obj, path, key) {
+            if (!obj) return document.createElement('div');
             const container = document.createElement('div');
             container.className = 'tree-node';
             const label = document.createElement('div');
             label.className = 'tree-label' + (path === selectedPath ? ' selected' : '');
 
-            // Nodes can have a "nombre" property for better display, or use the key
-            const displayName = obj.nombre || key;
+            const isTemplate = obj && obj._template ? true : false;
+            const displayName = (obj && obj.nombre) || key;
 
             const children = [];
             for (const k in obj) {
@@ -468,8 +528,9 @@
             }
 
             label.innerHTML = `
-                <span class="tree-icon">${children.length ? '▼' : '○'}</span>
+                <span class="tree-icon" style="color:${isTemplate ? '#ff00ff' : 'inherit'}">${children.length ? '▼' : '○'}</span>
                 <span style="font-weight:600">${displayName}</span>
+                ${isTemplate ? `<span style="font-size:0.5rem; background:#ff00ff; color:#000; padding:1px 4px; border-radius:2px; margin-left:auto; font-weight:900">${obj._template}</span>` : ''}
             `;
 
             label.onclick = (e) => {
@@ -493,9 +554,30 @@
             const bpSelector = document.getElementById('responsive-bp-selector');
             const nameLabel = document.getElementById('selected-name');
             container.innerHTML = '';
+
+            if (!obj) {
+                container.innerHTML = '<div style="opacity:0.3; font-style:italic; font-size:0.8rem">Ningún elemento seleccionado</div>';
+                stateSelector.style.display = 'none';
+                nameLabel.textContent = 'Selecciona un elemento';
+                return;
+            }
+
             stateSelector.style.display = 'flex';
             bpSelector.style.display = currentEditingState === 'responsive' ? 'flex' : 'none';
             nameLabel.textContent = obj.nombre || path.split('.').pop();
+
+            // Handle Template Reference
+            if (obj._template) {
+                const info = document.createElement('div');
+                info.style.padding = '8px 12px';
+                info.style.marginBottom = '12px';
+                info.style.background = 'rgba(255, 0, 255, 0.1)';
+                info.style.border = '1px solid rgba(255, 0, 255, 0.2)';
+                info.style.borderRadius = '4px';
+                info.style.fontSize = '0.65rem';
+                info.innerHTML = `<span style="color:#ff00ff">◆ INSTANCIA DE:</span> ${obj._template}`;
+                container.appendChild(info);
+            }
 
             let target;
             if (currentEditingState === 'base') {
@@ -543,33 +625,38 @@
             }
 
             // Button to add any native property
+            const actionsGrid = document.createElement('div');
+            actionsGrid.style.display = 'grid';
+            actionsGrid.style.gridTemplateColumns = '1fr 1fr';
+            actionsGrid.style.gap = '8px';
+            actionsGrid.style.marginTop = '20px';
+
             const addPropBtn = document.createElement('button');
             addPropBtn.className = 'btn-primary';
-            addPropBtn.style.width = '100%';
-            addPropBtn.textContent = '+ Agregar Propiedad Nativa';
+            addPropBtn.textContent = '+ Propiedad';
             addPropBtn.onclick = () => {
-                const prop = prompt('Nombre de la propiedad CSS (ej: background-image, border-inline):');
+                const prop = prompt('Nombre de la propiedad CSS:');
                 if (prop) {
                     const editTarget = currentEditingState === 'base' ? obj : (obj[currentEditingState] || (obj[currentEditingState] = {}));
                     editTarget[prop] = '';
                     renderProperties(obj, path);
                 }
             };
-            container.appendChild(addPropBtn);
+            actionsGrid.appendChild(addPropBtn);
 
             const addNodeBtn = document.createElement('button');
             addNodeBtn.className = 'btn-primary';
-            addNodeBtn.style.width = '100%';
-            addNodeBtn.style.marginTop = '10px';
             addNodeBtn.style.background = 'transparent';
             addNodeBtn.style.border = '1px solid var(--accent)';
             addNodeBtn.style.color = 'var(--accent)';
-            addNodeBtn.textContent = '+ Nuevo Hijo (DOM)';
+            addNodeBtn.textContent = '+ Hijo';
             addNodeBtn.onclick = () => {
                 const name = prompt('Nombre de la clave JSON:');
                 if (name) { obj[name] = { nombre: name }; renderTree(); sendToPreview(); }
             };
-            container.appendChild(addNodeBtn);
+            actionsGrid.appendChild(addNodeBtn);
+            container.appendChild(actionsGrid);
+
 
             // Seed Selector for property panel
             const seedDiv = document.createElement('div');
@@ -596,7 +683,7 @@
         function renderTokens() {
             const container = document.getElementById('tokens-tree');
             container.innerHTML = '';
-            const vars = contentData.variables || {};
+            const vars = (contentData && contentData.variables) || {};
             for (const cat in vars) {
                 const group = document.createElement('div');
                 group.className = 'prop-group';
@@ -608,6 +695,27 @@
                     row.querySelector('input').oninput = (e) => { vars[cat][key] = e.target.value; sendToPreview(); };
                     group.appendChild(row);
                 }
+                container.appendChild(group);
+            }
+        }
+
+        function renderTemplates() {
+            const container = document.getElementById('templates-tree');
+            container.innerHTML = '';
+            const temps = (contentData && contentData.templates) || {};
+            for (const name in temps) {
+                const group = document.createElement('div');
+                group.className = 'prop-group';
+                group.innerHTML = `<div class="prop-group-title">${name}</div>`;
+                const btn = document.createElement('button');
+                btn.className = 'btn-primary';
+                btn.style.width = '100%';
+                btn.textContent = 'Editar Definición';
+                btn.onclick = () => {
+                    selectedPath = `templates.${name}`;
+                    renderProperties(temps[name], selectedPath);
+                };
+                group.appendChild(btn);
                 container.appendChild(group);
             }
         }
@@ -675,6 +783,7 @@
                 sendToPreview();
                 renderTree();
                 renderTokens();
+                renderTemplates();
             } catch(err) {}
         };
 

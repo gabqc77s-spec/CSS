@@ -1,105 +1,263 @@
 {
-    "nombre": "NEXUS V6 IMMERSIVE",
-    "background-color": "$colors.bg",
-    "color": "$colors.text",
-    "font-family": "'Inter', system-ui, sans-serif",
+    "nombre": "THE SINGULARITY V8 - EFICELL",
+    "width": "100%",
     "min-height": "100vh",
-    "overflow-x": "hidden",
+    "background": "$variables.theme.bg",
+    "color": "$variables.theme.text",
+    "font-family": "'Inter', system-ui, sans-serif",
+    "transition": "background 0.5s ease",
     "variables": {
-        "colors": {
-            "bg": "#020204",
-            "text": "#ffffff",
-            "accent": "#00f0ff",
-            "accent2": "#ff003c",
-            "glass": "rgba(255,255,255,0.03)"
+        "theme": { "bg": "#1e1e2e", "text": "#f0f0f0", "accent": "#f59e0b" },
+        "stats": { "clicks": 0 }
+    },
+    "templates": {
+        "NavLink": {
+            "nombre": "enlace",
+            "texto": "{{label}}",
+            "color": "rgba(240, 240, 240, 0.7)",
+            "font-size": "0.9rem",
+            "cursor": "pointer",
+            "transition": "color 0.2s ease",
+            "hover": {
+                "color": "$variables.theme.accent"
+            }
+        },
+        "ServiceCard": {
+            "background": "rgba(255, 255, 255, 0.06)",
+            "border": "1px solid rgba(255, 255, 255, 0.08)",
+            "border-radius": "16px",
+            "padding": "3rem 2rem 2rem",
+            "min-width": "280px",
+            "min-height": "280px",
+            "flex": "1",
+            "display": "flex",
+            "flex-direction": "column",
+            "gap": "1rem",
+            "transition": "all 0.3s ease",
+            "hover": {
+                "transform": "translateY(-4px)",
+                "background": "rgba(255, 255, 255, 0.09)",
+                "border-color": "$variables.theme.accent"
+            },
+            "icono": {
+                "texto": "{{icon}}",
+                "font-size": "2rem"
+            },
+            "titulo": {
+                "texto": "{{title}}",
+                "color": "#f0f0f0",
+                "font-size": "1.1rem",
+                "font-weight": "600"
+            },
+            "descripcion": {
+                "texto": "{{desc}}",
+                "color": "rgba(240, 240, 240, 0.5)",
+                "font-size": "0.88rem",
+                "line-height": "1.6"
+            }
         }
     },
-    "animations": {
-        "pulse": {
-            "0%": { "opacity": "0.3" },
-            "50%": { "opacity": "1" },
-            "100%": { "opacity": "0.3" }
+    "navbar": {
+        "nombre": "barra de navegacion",
+        "width": "100%",
+        "height": "70px",
+        "background": "rgba(30, 30, 46, 0.8)",
+        "position": "fixed",
+        "top": "0",
+        "left": "0",
+        "display": "flex",
+        "align-items": "center",
+        "justify-content": "space-between",
+        "padding": "0 2rem 0 10rem",
+        "backdrop-filter": "blur(20px)",
+        "z-index": "1000",
+        "logo": {
+            "nombre": "logo",
+            "width": "160px",
+            "height": "160px",
+            "position": "absolute",
+            "top": "17px",
+            "left": "28px",
+            "background-image": "url('https://gabqc77s-spec.github.io/eficell/uploads/chromaclear-result%20(10).png')",
+            "background-size": "contain",
+            "background-repeat": "no-repeat",
+            "background-position": "center"
+        },
+        "nav-links": {
+            "nombre": "enlaces",
+            "display": "flex",
+            "gap": "2rem",
+            "align-items": "center",
+            "link-inicio": { "_template": "NavLink", "props": { "label": "Inicio" } },
+            "link-servicios": { "_template": "NavLink", "props": { "label": "Servicios" } },
+            "link-nosotros": { "_template": "NavLink", "props": { "label": "Nosotros" } },
+            "link-contacto": { "_template": "NavLink", "props": { "label": "Contacto" } }
+        },
+        "boton-cta": {
+            "nombre": "boton cotizar",
+            "texto": "Cotizar Ahora",
+            "background": "$variables.theme.accent",
+            "color": "#ffffff",
+            "padding": "10px 24px",
+            "border-radius": "24px",
+            "font-size": "0.88rem",
+            "font-weight": "600",
+            "cursor": "pointer",
+            "transition": "all 0.2s ease",
+            "hover": {
+                "transform": "scale(1.05)",
+                "background": "#d97706",
+                "box-shadow": "0 4px 15px rgba(217, 119, 6, 0.4)"
+            }
         }
     },
     "hero": {
-        "nombre": "Living Hero",
-        "height": "100vh",
+        "nombre": "seccion hero",
+        "width": "100%",
+        "min-height": "100vh",
         "display": "flex",
         "flex-direction": "column",
         "align-items": "center",
         "justify-content": "center",
         "text-align": "center",
-        "position": "relative",
-        "background": "radial-gradient(circle at calc(var(--nexus-mouse-x) * 1px) calc(var(--nexus-mouse-y) * 1px), rgba(0, 240, 255, 0.15) 0%, transparent 40%)",
-        "title": {
-            "texto": "NEXUS V6",
-            "font-size": "calc(8rem + (var(--nexus-scroll) * 0.1px))",
-            "font-weight": "900",
-            "letter-spacing": "-0.05em",
-            "transform": "translateY(calc(var(--nexus-scroll) * -0.5px))",
-            "opacity": "calc(1 - (var(--nexus-scroll) / 1000))"
+        "padding": "120px 2rem 4rem",
+        "background": "radial-gradient(ellipse at 70% 20%, rgba(217, 119, 6, 0.06) 0%, transparent 50%), radial-gradient(ellipse at 30% 80%, rgba(45, 138, 78, 0.04) 0%, transparent 50%)",
+        "badge": {
+            "nombre": "badge disponible",
+            "texto": "● Disponible ahora",
+            "color": "rgba(240, 240, 240, 0.7)",
+            "font-size": "0.85rem",
+            "padding": "6px 16px",
+            "border-radius": "20px",
+            "border": "1px solid rgba(255, 255, 255, 0.1)",
+            "margin-bottom": "2rem"
         },
-        "subtitle": {
-            "texto": "The Impossible is Now Reactive",
-            "font-size": "1.5rem",
-            "opacity": "0.5",
-            "margin-top": "20px",
-            "letter-spacing": "0.5em"
+        "titulo-contenedor": {
+            "nombre": "titulo completo",
+            "display": "flex",
+            "flex-wrap": "wrap",
+            "justify-content": "center",
+            "gap": "0 0.35em",
+            "margin-bottom": "1.5rem",
+            "max-width": "800px",
+            "titulo-1": {
+                "texto": "Energía Sostenible Para",
+                "font-size": "clamp(2.5rem, 6vw, 4.5rem)",
+                "font-weight": "800",
+                "color": "#f0f0f0",
+                "line-height": "1.15"
+            },
+            "titulo-2": {
+                "texto": "Tu Futuro",
+                "font-size": "clamp(2.5rem, 6vw, 4.5rem)",
+                "font-weight": "800",
+                "font-style": "italic",
+                "color": "$variables.theme.accent",
+                "line-height": "1.15"
+            }
         },
-        "cursor-follow": {
-            "nombre": "Cursor Glow",
-            "position": "fixed",
-            "width": "100px",
-            "height": "100px",
-            "background": "$colors.accent",
-            "filter": "blur(80px)",
-            "border-radius": "50%",
-            "top": "calc(var(--nexus-mouse-y) * 1px - 50px)",
-            "left": "calc(var(--nexus-mouse-x) * 1px - 50px)",
-            "pointer-events": "none",
-            "z-index": "10"
+        "subtitulo": {
+            "texto": "Soluciones integrales en energía solar, eficiencia energética e hidrógeno verde. Acompañamos a empresas, instituciones y comunidades desde la evaluación inicial hasta la implementación de sistemas sustentables.",
+            "color": "rgba(240, 240, 240, 0.5)",
+            "font-size": "1rem",
+            "line-height": "1.7",
+            "max-width": "650px",
+            "margin-bottom": "2.5rem"
+        },
+        "botones-hero": {
+            "display": "flex",
+            "gap": "1.5rem",
+            "flex-wrap": "wrap",
+            "justify-content": "center",
+            "margin-bottom": "4rem",
+            "boton-evaluacion": {
+                "texto": "Solicitar Evaluación",
+                "background": "$variables.theme.accent",
+                "color": "#ffffff",
+                "padding": "14px 32px",
+                "border-radius": "12px",
+                "font-size": "1rem",
+                "font-weight": "600",
+                "cursor": "pointer",
+                "transition": "all 0.2s ease",
+                "hover": {
+                    "transform": "translateY(-2px)",
+                    "background": "#d97706",
+                    "box-shadow": "0 6px 20px rgba(217, 119, 6, 0.4)"
+                },
+                "_actions": [
+                    { "type": "set", "path": "variables.stats.clicks", "value": "math($variables.stats.clicks + 1)" }
+                ]
+            },
+            "boton-servicios": {
+                "texto": "Conocer Servicios",
+                "background": "transparent",
+                "color": "#f0f0f0",
+                "padding": "14px 32px",
+                "font-size": "1rem",
+                "font-weight": "500",
+                "cursor": "pointer",
+                "transition": "all 0.2s ease",
+                "hover": {
+                    "color": "$variables.theme.accent"
+                }
+            }
+        },
+        "interaction_counter": {
+            "texto": "INTERACCIONES: $variables.stats.clicks",
+            "font-size": "0.7rem",
+            "color": "$variables.theme.accent",
+            "letter-spacing": "2px",
+            "margin-bottom": "2rem"
         }
     },
-    "cards": {
-        "nombre": "Reactive Grid",
-        "display": "grid",
-        "grid-template-columns": "repeat(3, 1fr)",
-        "gap": "2rem",
-        "padding": "100px 10%",
-        "responsive": {
-            "0": { "grid-template-columns": "1fr" },
-            "1024": { "grid-template-columns": "repeat(3, 1fr)" }
+    "servicios": {
+        "nombre": "seccion servicios",
+        "width": "100%",
+        "padding": "6rem 2rem",
+        "display": "flex",
+        "flex-direction": "column",
+        "align-items": "center",
+        "background": "#1e3a2a",
+        "titulo-servicios": {
+            "texto": "Nuestros Servicios",
+            "font-size": "2rem",
+            "font-weight": "700",
+            "color": "#f0f0f0",
+            "margin-bottom": "3rem",
+            "font-style": "italic"
         },
-        "card1": {
-            "_seed": "glass",
-            "padding": "3rem",
-            "border-radius": "32px",
-            "transform": "perspective(1000px) rotateX(calc((var(--nexus-mouse-y) - 500) * -0.02deg)) rotateY(calc((var(--nexus-mouse-x) - 500) * 0.02deg))",
-            "h": { "texto": "Environmental Mapping", "font-weight": "800", "margin-bottom": "1rem" },
-            "p": { "texto": "Direct CSS variable injection: Scroll, Mouse, Time.", "opacity": "0.4" }
+        "grid-servicios": {
+            "display": "flex",
+            "gap": "1.5rem",
+            "max-width": "1200px",
+            "width": "100%",
+            "overflow-x": "auto",
+            "padding-bottom": "1rem",
+            "card-1": { "_template": "ServiceCard", "props": { "icon": "⚡", "title": "Sistemas Fotovoltaicos", "desc": "Instalación profesional de sistemas monofásicos y trifásicos adaptados a tu consumo." } },
+            "card-2": { "_template": "ServiceCard", "props": { "icon": "🔧", "title": "Mantenimiento", "desc": "Servicio preventivo y correctivo para mantener tus paneles funcionando al máximo." } },
+            "card-3": { "_template": "ServiceCard", "props": { "icon": "📊", "title": "Auditorías Energéticas", "desc": "Diagnósticos de consumo y evaluación técnica-económica para optimizar recursos." } }
+        }
+    },
+    "footer": {
+        "nombre": "pie de pagina",
+        "width": "100%",
+        "padding": "2rem 3rem",
+        "display": "flex",
+        "justify-content": "space-between",
+        "align-items": "center",
+        "background": "linear-gradient(135deg, #1e3a2a, #2d8a4e)",
+        "footer-brand": {
+            "display": "flex",
+            "align-items": "center",
+            "gap": "0.5rem",
+            "footer-emoji": { "texto": "🌱", "font-size": "1.2rem" },
+            "footer-nombre": { "texto": "Eficell", "color": "#f0f0f0", "font-size": "1rem", "font-weight": "600" }
         },
-        "card2": {
-            "_seed": "glass",
-            "padding": "3rem",
-            "border-radius": "32px",
-            "transform": "translateY(calc(var(--nexus-scroll) * 0.1px))",
-            "h": { "texto": "Meta-Seeds", "font-weight": "800", "margin-bottom": "1rem" },
-            "p": { "texto": "Architectural patterns expanded into native CSS.", "opacity": "0.4" }
-        },
-        "card3": {
-            "_seed": "glass",
-            "padding": "3rem",
-            "border-radius": "32px",
-            "h": { "texto": "Infinite Potential", "font-weight": "800", "margin-bottom": "1rem" },
-            "p": { "texto": "Your imagination is the only boundary.", "opacity": "0.4" },
-            "timer": {
-                "texto": "SYSTEM_TIME: 0.00",
-                "margin-top": "2rem",
-                "font-family": "'JetBrains Mono', monospace",
-                "font-size": "0.8rem",
-                "color": "$colors.accent",
-                "animation": "pulse 2s infinite"
-            }
+        "texto-footer": {
+            "texto": "© 2026 Eficell Consultores SpA. Energía sostenible.",
+            "color": "rgba(240, 240, 240, 0.6)",
+            "font-size": "0.82rem"
         }
     }
 }
