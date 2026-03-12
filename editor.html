@@ -287,6 +287,48 @@
         .input-base:hover { background: rgba(255,255,255,0.05); }
         .input-base:focus { border-color: var(--accent); background: rgba(0, 240, 255, 0.05); }
 
+        /* Range Controls */
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 4px;
+            background: var(--border);
+            border-radius: 2px;
+            outline: none;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 12px; height: 12px;
+            background: var(--accent);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        /* Button Groups */
+        .btn-group {
+            display: flex;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            overflow: hidden;
+            width: 100%;
+        }
+        .btn-group-item {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-dim);
+            font-size: 0.6rem;
+            padding: 6px 2px;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-weight: 700;
+            border-right: 1px solid var(--border);
+        }
+        .btn-group-item:last-child { border-right: none; }
+        .btn-group-item.active { background: var(--accent); color: #000; }
+
         /* ─── Tree Nodes ─── */
         .tree-node { margin-left: 12px; position: relative; }
         .tree-node::before {
@@ -505,22 +547,47 @@
         let currentBreakpoint = '0';
 
         const PRESETS = {
-            'Liquid Panel': {
-                "_seed": "glass-panel",
-                "padding": "40px",
-                "transform": "perspective(1000px) rotateX(math(my * 10 - 5)deg) rotateY(math(mx * 10 - 5)deg)",
-                "transition": "transform 0.1s ease-out",
-                "title": { "texto": "NEURAL_NODE", "_seed": "neon-glow", "font-size": "2rem" },
-                "desc": { "texto": "Real-time mouse tracking applied via JSON math formulas.", "margin-top": "1rem", "opacity": "0.4" }
+            'Glassmorphic Card': {
+                "nombre": "Tarjeta Cristal",
+                "background": "rgba(255, 255, 255, 0.05)",
+                "backdrop-filter": "blur(12px)",
+                "border": "1px solid rgba(255, 255, 255, 0.1)",
+                "border-radius": "24px",
+                "padding": "2rem",
+                "display": "flex",
+                "flex-direction": "column",
+                "gap": "1rem",
+                "box-shadow": "0 20px 50px rgba(0,0,0,0.3)",
+                "titulo": { "texto": "Nuevo Módulo", "font-size": "1.5rem", "font-weight": "700" },
+                "contenido": { "texto": "Este es un componente generado dinámicamente con estilos de cristal.", "opacity": "0.6", "font-size": "0.9rem" }
             },
-            'Physics Node': {
-                "width": "100px", "height": "100px", "border-radius": "50%",
-                "background": "linear-gradient(45deg, $variables.theme.accent, #ff00ff)",
-                "position": "absolute",
-                "left": "math(mx * 100)%",
-                "top": "math(my * 100)%",
-                "transform": "translate(-50%, -50%) scale(math(1 + sin(time * 2) * 0.2))",
-                "box-shadow": "0 0 40px $variables.theme.accent_glow"
+            'Neural Hero': {
+                "nombre": "Sección Hero",
+                "width": "100%", "height": "80vh",
+                "display": "flex", "flex-direction": "column", "align-items": "center", "justify-content": "center",
+                "background": "radial-gradient(circle at math(mx * 100)% math(my * 100)%, rgba(0, 240, 255, 0.15), transparent 50%)",
+                "titulo": {
+                    "texto": "TRANSCRIPCIÓN INFINITA",
+                    "font-size": "5rem", "font-weight": "900", "letter-spacing": "-2px",
+                    "transform": "translateY(math(sin(time) * 10)px)"
+                }
+            },
+            'Physics Sandbox': {
+                "nombre": "Sandbox Físico",
+                "width": "100%", "height": "400px", "position": "relative", "overflow": "hidden", "background": "#050505",
+                "bola": {
+                    "width": "60px", "height": "60px", "border-radius": "50%", "background": "cyan", "position": "absolute",
+                    "left": "math(50 + sin(time * 2) * 40)%",
+                    "top": "math(50 + cos(time * 3) * 30)%",
+                    "box-shadow": "0 0 30px cyan"
+                }
+            },
+            'Neon Button': {
+                "nombre": "Botón Neón",
+                "padding": "12px 30px", "border-radius": "100px", "background": "transparent",
+                "border": "2px solid #00f0ff", "color": "#00f0ff", "font-weight": "700", "cursor": "pointer",
+                "transition": "all 0.3s",
+                "hover": { "background": "#00f0ff", "color": "#000", "box-shadow": "0 0 20px #00f0ff" }
             }
         };
 
@@ -804,53 +871,112 @@
         function createPropRow(key, val, target, obj) {
             const row = document.createElement('div');
             row.className = 'prop-row';
+            row.style.flexDirection = 'column';
+            row.style.alignItems = 'stretch';
+            row.style.gap = '4px';
 
             row.innerHTML = `
-                <div class="prop-key" title="${key}">${key}</div>
-                <div class="prop-input-wrap" id="wrap-${key.replace(/[^a-zA-Z]/g, '')}">
+                <div style="display:flex; justify-content:space-between; align-items:center">
+                    <div class="prop-key" style="width:auto" title="${key}">${key}</div>
+                    <div class="prop-actions" style="display:flex; gap:8px"></div>
                 </div>
+                <div class="prop-input-wrap" id="wrap-${key.replace(/[^a-zA-Z]/g, '')}"></div>
             `;
 
             const wrap = row.querySelector('.prop-input-wrap');
+            const actions = row.querySelector('.prop-actions');
 
-            if (['display', 'position', 'flex-direction', 'justify-content', 'align-items', 'flex-wrap', 'overflow', 'cursor'].includes(key)) {
-                const options = {
-                    'display': ['block', 'flex', 'grid', 'none', 'inline-block', 'inline-flex'],
-                    'position': ['static', 'relative', 'absolute', 'fixed', 'sticky'],
-                    'flex-direction': ['row', 'column', 'row-reverse', 'column-reverse'],
-                    'justify-content': ['flex-start', 'center', 'flex-end', 'space-between', 'space-around', 'space-evenly'],
-                    'align-items': ['stretch', 'flex-start', 'center', 'flex-end', 'baseline'],
-                    'flex-wrap': ['nowrap', 'wrap', 'wrap-reverse'],
-                    'overflow': ['visible', 'hidden', 'scroll', 'auto'],
-                    'cursor': ['auto', 'default', 'pointer', 'wait', 'text', 'move', 'not-allowed']
-                };
-                const sel = document.createElement('select');
-                sel.className = 'input-base';
-                options[key].forEach(opt => {
-                    const o = document.createElement('option');
-                    o.value = o.textContent = opt;
-                    sel.appendChild(o);
+            // 1. Keyword Selectors (Button Groups)
+            const keywordProps = {
+                'display': ['block', 'flex', 'grid', 'none'],
+                'flex-direction': ['row', 'column'],
+                'justify-content': ['start', 'center', 'end', 'between', 'around'],
+                'align-items': ['start', 'center', 'end', 'stretch'],
+                'position': ['relative', 'absolute', 'fixed', 'sticky'],
+                'overflow': ['visible', 'hidden', 'auto']
+            };
+
+            const keywordMap = {
+                'start': 'flex-start', 'end': 'flex-end', 'between': 'space-between', 'around': 'space-around'
+            };
+
+            if (keywordProps[key]) {
+                const group = document.createElement('div');
+                group.className = 'btn-group';
+                keywordProps[key].forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = 'btn-group-item';
+                    if (val === opt || val === keywordMap[opt]) btn.classList.add('active');
+                    btn.textContent = opt;
+                    btn.onclick = () => {
+                        target[key] = keywordMap[opt] || opt;
+                        Array.from(group.children).forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        sendToPreview();
+                    };
+                    group.appendChild(btn);
                 });
-                sel.value = val || options[key][0];
-                sel.onchange = () => { target[key] = sel.value; sendToPreview(); };
-                wrap.appendChild(sel);
-            } else if (key.includes('color') || key === 'background' || key.includes('shadow')) {
+                wrap.appendChild(group);
+            }
+            // 2. Numeric Sliders
+            else if (['opacity', 'flex-grow', 'z-index', 'font-weight'].includes(key) || (val && !isNaN(parseFloat(val)) && !val.toString().includes(' '))) {
+                const isUnit = typeof val === 'string' && (val.includes('px') || val.includes('rem') || val.includes('%') || val.includes('vh'));
+                let unit = isUnit ? val.replace(/[0-9.-]/g, '') : '';
+                let numVal = parseFloat(val) || 0;
+
+                const sliderContainer = document.createElement('div');
+                sliderContainer.style.display = 'flex';
+                sliderContainer.style.flexDirection = 'column';
+                sliderContainer.style.gap = '4px';
+
+                const slider = document.createElement('input');
+                slider.type = 'range';
+                if (key === 'opacity') { slider.min = 0; slider.max = 1; slider.step = 0.05; }
+                else if (key === 'font-weight') { slider.min = 100; slider.max = 900; slider.step = 100; }
+                else { slider.min = 0; slider.max = 500; slider.step = 1; }
+                slider.value = numVal;
+
+                const textInput = document.createElement('input');
+                textInput.className = 'input-base';
+                textInput.style.padding = '4px 8px';
+                textInput.style.fontSize = '0.65rem';
+                textInput.value = val || '';
+
+                slider.oninput = () => {
+                    numVal = slider.value;
+                    textInput.value = target[key] = numVal + unit;
+                    sendToPreview();
+                };
+                textInput.oninput = () => {
+                    target[key] = textInput.value;
+                    slider.value = parseFloat(textInput.value) || 0;
+                    sendToPreview();
+                };
+
+                sliderContainer.appendChild(slider);
+                sliderContainer.appendChild(textInput);
+                wrap.appendChild(sliderContainer);
+            }
+            // 3. Color Pickers
+            else if (key.includes('color') || key === 'background' || key.includes('shadow')) {
                 const input = document.createElement('input');
                 input.className = 'input-base';
                 input.type = 'text';
                 input.value = val || '';
-                input.oninput = () => { target[key] = input.value; sendToPreview(); };
-                wrap.appendChild(input);
 
-                if (val && val.toString().startsWith('#') && val.length <= 7) {
-                    const cp = document.createElement('input');
-                    cp.type = 'color';
-                    cp.style.cssText = 'width:20px; height:20px; border:none; padding:0; background:none; margin-left:8px; cursor:pointer';
-                    cp.value = val;
-                    cp.oninput = () => { input.value = target[key] = cp.value; sendToPreview(); };
-                    wrap.appendChild(cp);
-                }
-            } else {
+                const cp = document.createElement('input');
+                cp.type = 'color';
+                cp.style.cssText = 'width:100%; height:24px; border:none; padding:0; background:none; cursor:pointer; margin-top:4px; border-radius:4px';
+                if (val && val.toString().startsWith('#')) cp.value = val.slice(0, 7);
+
+                input.oninput = () => { target[key] = input.value; sendToPreview(); };
+                cp.oninput = () => { input.value = target[key] = cp.value; sendToPreview(); };
+
+                wrap.appendChild(input);
+                wrap.appendChild(cp);
+            }
+            // 4. Default Text
+            else {
                 const input = document.createElement('input');
                 input.className = 'input-base';
                 input.type = 'text';
@@ -862,10 +988,10 @@
             if (!['nombre', 'tagName'].includes(key)) {
                 const del = document.createElement('span');
                 del.className = 'delete-prop';
-                del.style.cssText = 'cursor:pointer; opacity:0.3; font-size:0.6rem; margin-left:8px';
-                del.textContent = '✕';
+                del.style.cssText = 'cursor:pointer; opacity:0.3; font-size:0.6rem';
+                del.textContent = '✕ REMOVE';
                 del.onclick = () => { delete target[key]; renderProperties(obj, selectedPath); sendToPreview(); };
-                wrap.appendChild(del);
+                actions.appendChild(del);
             }
 
             return row;
@@ -893,22 +1019,68 @@
         function renderTemplates() {
             const container = document.getElementById('templates-tree');
             container.innerHTML = '';
+
+            // 1. Static Presets Section
+            const presetGroup = document.createElement('div');
+            presetGroup.className = 'prop-group';
+            presetGroup.innerHTML = `<div class="prop-group-title">Component Presets</div>`;
+            for (const name in PRESETS) {
+                const item = document.createElement('div');
+                item.className = 'tree-label';
+                item.style.fontSize = '0.7rem';
+                item.innerHTML = `<span class="tree-icon">✦</span> ${name}`;
+                item.onclick = () => {
+                    if (!selectedPath) return alert('Selecciona un nodo padre en el árbol primero');
+                    const parent = getObjPath(contentData, selectedPath);
+                    const safeName = name.toLowerCase().replace(/\s/g, '_') + '_' + Date.now().toString().slice(-4);
+                    parent[safeName] = JSON.parse(JSON.stringify(PRESETS[name]));
+                    refreshAll();
+                };
+                presetGroup.appendChild(item);
+            }
+            container.appendChild(presetGroup);
+
+            // 2. Custom Templates Section
             const temps = (contentData && contentData.templates) || {};
+            const customGroup = document.createElement('div');
+            customGroup.className = 'prop-group';
+            customGroup.innerHTML = `<div class="prop-group-title">User Templates</div>`;
             for (const name in temps) {
-                const group = document.createElement('div');
-                group.className = 'prop-group';
-                group.innerHTML = `<div class="prop-group-title">${name}</div>`;
-                const btn = document.createElement('button');
-                btn.className = 'btn-primary';
-                btn.style.width = '100%';
-                btn.textContent = 'Editar Definición';
-                btn.onclick = () => {
+                const row = document.createElement('div');
+                row.style.display = 'flex';
+                row.style.gap = '4px';
+                row.style.marginBottom = '4px';
+
+                const editBtn = document.createElement('button');
+                editBtn.className = 'btn-primary';
+                editBtn.style.flex = '1';
+                editBtn.style.fontSize = '0.6rem';
+                editBtn.textContent = name;
+                editBtn.onclick = () => {
                     selectedPath = `templates.${name}`;
                     renderProperties(temps[name], selectedPath);
+                    renderTree();
                 };
-                group.appendChild(btn);
-                container.appendChild(group);
+
+                const instBtn = document.createElement('button');
+                instBtn.className = 'btn-primary';
+                instBtn.style.background = 'transparent';
+                instBtn.style.border = '1px solid var(--accent)';
+                instBtn.style.color = 'var(--accent)';
+                instBtn.textContent = '+';
+                instBtn.onclick = () => {
+                    if (!selectedPath) return alert('Selecciona un nodo padre primero');
+                    const parent = getObjPath(contentData, selectedPath);
+                    const instName = `inst_${name}_${Date.now().toString().slice(-4)}`;
+                    parent[instName] = { _template: name, nombre: instName };
+                    refreshAll();
+                };
+
+                row.appendChild(editBtn);
+                row.appendChild(instBtn);
+                customGroup.appendChild(row);
             }
+            container.appendChild(customGroup);
         }
 
         // Event Handlers
