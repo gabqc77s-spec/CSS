@@ -338,6 +338,7 @@
             <div class="tab active" data-tab="visual">Estructura</div>
             <div class="tab" data-tab="json">Código</div>
             <div class="tab" data-tab="tokens">Tokens</div>
+            <div class="tab" data-tab="lab">Laboratorio</div>
         </div>
 
         <div class="main-content">
@@ -347,6 +348,26 @@
             <textarea id="json-editor" style="display:none" spellcheck="false"></textarea>
             <div id="tokens-tab" class="tree-panel" style="display:none">
                 <div id="tokens-tree"></div>
+            </div>
+            <div id="lab-tab" class="tree-panel" style="display:none">
+                <div class="prop-group">
+                    <div class="prop-group-title">Environmental Variables</div>
+                    <div style="font-size: 0.7rem; opacity: 0.6; line-height: 1.6; padding: 10px;">
+                        Usa estas variables en cualquier campo:<br>
+                        <code style="color: var(--accent)">var(--nexus-time)</code><br>
+                        <code style="color: var(--accent)">var(--nexus-scroll)</code><br>
+                        <code style="color: var(--accent)">var(--nexus-mouse-x)</code><br>
+                        <code style="color: var(--accent)">var(--nexus-mouse-y)</code>
+                    </div>
+                </div>
+                <div class="prop-group">
+                    <div class="prop-group-title">Component Seeds</div>
+                    <div id="seed-list" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 10px;">
+                        <button class="vp-btn" onclick="applySeed('glass')">Glassmorphism</button>
+                        <button class="vp-btn" onclick="applySeed('neo')">Neumorphism</button>
+                        <button class="vp-btn" onclick="applySeed('cyber')">Cyberpunk</button>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -546,9 +567,30 @@
             addNodeBtn.textContent = '+ Nuevo Hijo (DOM)';
             addNodeBtn.onclick = () => {
                 const name = prompt('Nombre de la clave JSON:');
-                if (name) { obj[name] = { nombre: name }; renderTree(); }
+                if (name) { obj[name] = { nombre: name }; renderTree(); sendToPreview(); }
             };
             container.appendChild(addNodeBtn);
+
+            // Seed Selector for property panel
+            const seedDiv = document.createElement('div');
+            seedDiv.className = 'prop-group';
+            seedDiv.innerHTML = `<div class="prop-group-title">Aply Design Seed</div>`;
+            const seedSelect = document.createElement('select');
+            seedSelect.className = 'input-base';
+            seedSelect.innerHTML = `
+                <option value="">None</option>
+                <option value="glass" ${obj._seed === 'glass' ? 'selected' : ''}>Glassmorphism</option>
+                <option value="neo" ${obj._seed === 'neo' ? 'selected' : ''}>Neumorphism</option>
+                <option value="cyber" ${obj._seed === 'cyber' ? 'selected' : ''}>Cyberpunk</option>
+            `;
+            seedSelect.onchange = () => {
+                obj._seed = seedSelect.value;
+                if (!obj._seed) delete obj._seed;
+                renderProperties(obj, path);
+                sendToPreview();
+            };
+            seedDiv.appendChild(seedSelect);
+            container.appendChild(seedDiv);
         }
 
         function renderTokens() {
@@ -613,6 +655,14 @@
             const obj = getObjPath(contentData, selectedPath);
             if (obj) renderProperties(obj, selectedPath);
         };
+
+        function applySeed(seed) {
+            if (!selectedPath) return alert('Selecciona un nodo primero');
+            const obj = getObjPath(contentData, selectedPath);
+            obj._seed = seed;
+            renderProperties(obj, selectedPath);
+            sendToPreview();
+        }
 
         function getObjPath(obj, path) {
             if (!path) return obj;

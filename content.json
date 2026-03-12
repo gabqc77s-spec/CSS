@@ -1,177 +1,105 @@
 {
-    "nombre": "TRANSCRIPTOR PRO V5",
+    "nombre": "NEXUS V6 IMMERSIVE",
     "background-color": "$colors.bg",
     "color": "$colors.text",
     "font-family": "'Inter', system-ui, sans-serif",
     "min-height": "100vh",
+    "overflow-x": "hidden",
     "variables": {
         "colors": {
-            "bg": "#050505",
+            "bg": "#020204",
             "text": "#ffffff",
-            "accent": "#4ade80",
-            "surface": "rgba(255,255,255,0.03)",
-            "border": "rgba(255,255,255,0.1)",
-            "glass": "rgba(10, 10, 12, 0.7)"
-        },
-        "spacing": {
-            "page": "8vw",
-            "section": "160px"
+            "accent": "#00f0ff",
+            "accent2": "#ff003c",
+            "glass": "rgba(255,255,255,0.03)"
         }
     },
     "animations": {
-        "float": {
-            "0%": { "transform": "translateY(0) scale(1)" },
-            "50%": { "transform": "translateY(-20px) scale(1.05)" },
-            "100%": { "transform": "translateY(0) scale(1)" }
-        },
-        "fadeInUp": {
-            "0%": { "opacity": "0", "transform": "translateY(40px)" },
-            "100%": { "opacity": "1", "transform": "translateY(0)" }
-        },
-        "glow": {
-            "0%": { "box-shadow": "0 0 0px rgba(74, 222, 128, 0)" },
-            "50%": { "box-shadow": "0 0 20px rgba(74, 222, 128, 0.3)" },
-            "100%": { "box-shadow": "0 0 0px rgba(74, 222, 128, 0)" }
-        }
-    },
-    "nav": {
-        "nombre": "Navigation",
-        "display": "flex",
-        "justify-content": "space-between",
-        "align-items": "center",
-        "padding": "1.5rem $spacing.page",
-        "position": "fixed",
-        "top": "0",
-        "width": "100%",
-        "z-index": "1000",
-        "backdrop-filter": "blur(24px)",
-        "background-color": "$colors.glass",
-        "border-bottom": "1px solid $colors.border",
-        "logo": {
-            "texto": "NATIVE.JS",
-            "font-weight": "900",
-            "font-size": "1.2rem",
-            "color": "$colors.accent",
-            "letter-spacing": "-1.5px"
-        },
-        "links": {
-            "display": "flex",
-            "gap": "2.5rem",
-            "responsive": {
-                "0": { "display": "none" },
-                "768": { "display": "flex" }
-            },
-            "l1": { "texto": "Engine", "font-size": "0.85rem", "font-weight": "600", "opacity": "0.6", "cursor": "pointer", "hover": { "opacity": "1", "color": "$colors.accent" } },
-            "l2": { "texto": "Fidelity", "font-size": "0.85rem", "font-weight": "600", "opacity": "0.6", "cursor": "pointer", "hover": { "opacity": "1", "color": "$colors.accent" } },
-            "l3": { "texto": "Docs", "font-size": "0.85rem", "font-weight": "600", "opacity": "0.6", "cursor": "pointer", "hover": { "opacity": "1", "color": "$colors.accent" } }
-        },
-        "cta": {
-            "texto": "Get Started",
-            "background-color": "$colors.accent",
-            "color": "#000",
-            "padding": "0.6rem 1.4rem",
-            "border-radius": "8px",
-            "font-size": "0.85rem",
-            "font-weight": "700",
-            "cursor": "pointer",
-            "transition": "transform 0.2s ease",
-            "hover": { "transform": "scale(1.05)", "box-shadow": "0 10px 20px rgba(74, 222, 128, 0.2)" }
+        "pulse": {
+            "0%": { "opacity": "0.3" },
+            "50%": { "opacity": "1" },
+            "100%": { "opacity": "0.3" }
         }
     },
     "hero": {
-        "nombre": "Hero",
+        "nombre": "Living Hero",
+        "height": "100vh",
         "display": "flex",
         "flex-direction": "column",
         "align-items": "center",
         "justify-content": "center",
-        "padding": "220px $spacing.page 120px",
         "text-align": "center",
-        "background": "radial-gradient(circle at 50% -20%, rgba(74, 222, 128, 0.15) 0%, transparent 60%)",
-        "tag": {
-            "texto": "THE FUTURE IS NATIVE",
-            "font-size": "0.65rem",
-            "font-weight": "800",
-            "letter-spacing": "0.2em",
-            "color": "$colors.accent",
-            "margin-bottom": "2rem",
-            "animation": "glow 3s infinite ease-in-out"
-        },
+        "position": "relative",
+        "background": "radial-gradient(circle at calc(var(--nexus-mouse-x) * 1px) calc(var(--nexus-mouse-y) * 1px), rgba(0, 240, 255, 0.15) 0%, transparent 40%)",
         "title": {
-            "texto": "Pure CSS Fidelity in Structured JSON",
-            "font-size": "clamp(3rem, 8vw, 6.5rem)",
+            "texto": "NEXUS V6",
+            "font-size": "calc(8rem + (var(--nexus-scroll) * 0.1px))",
             "font-weight": "900",
-            "line-height": "0.85",
             "letter-spacing": "-0.05em",
-            "margin-bottom": "2.5rem",
-            "animation": "fadeInUp 0.8s ease-out"
+            "transform": "translateY(calc(var(--nexus-scroll) * -0.5px))",
+            "opacity": "calc(1 - (var(--nexus-scroll) / 1000))"
         },
-        "description": {
-            "texto": "A professional-grade transcriptor engine that maps standard CSS properties directly from your data model to the DOM. No abstractions, no limitations.",
-            "max-width": "700px",
-            "font-size": "1.25rem",
-            "line-height": "1.6",
+        "subtitle": {
+            "texto": "The Impossible is Now Reactive",
+            "font-size": "1.5rem",
             "opacity": "0.5",
-            "margin-bottom": "4rem",
-            "animation": "fadeInUp 1s ease-out"
+            "margin-top": "20px",
+            "letter-spacing": "0.5em"
         },
-        "features": {
-            "display": "grid",
-            "grid-template-columns": "repeat(3, 1fr)",
-            "gap": "2rem",
-            "width": "100%",
-            "max-width": "1200px",
-            "responsive": {
-                "0": { "grid-template-columns": "1fr" },
-                "768": { "grid-template-columns": "repeat(3, 1fr)" }
-            },
-            "f1": {
-                "background-color": "$colors.surface",
-                "padding": "3rem 2.5rem",
-                "border-radius": "24px",
-                "border": "1px solid $colors.border",
-                "text-align": "left",
-                "transition": "all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
-                "hover": { "transform": "translateY(-12px)", "border-color": "$colors.accent", "background-color": "rgba(255,255,255,0.05)" },
-                "icon": { "texto": "✦", "color": "$colors.accent", "font-size": "2rem", "margin-bottom": "1.5rem" },
-                "h": { "texto": "Direct Mapping", "font-weight": "800", "font-size": "1.4rem", "margin-bottom": "1rem" },
-                "p": { "texto": "Uses el.style.setProperty() for 1:1 compatibility with W3C standards.", "opacity": "0.4", "line-height": "1.5" }
-            },
-            "f2": {
-                "background-color": "$colors.surface",
-                "padding": "3rem 2.5rem",
-                "border-radius": "24px",
-                "border": "1px solid $colors.border",
-                "text-align": "left",
-                "transition": "all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
-                "hover": { "transform": "translateY(-12px)", "border-color": "$colors.accent", "background-color": "rgba(255,255,255,0.05)" },
-                "icon": { "texto": "⚛", "color": "$colors.accent", "font-size": "2rem", "margin-bottom": "1.5rem" },
-                "h": { "texto": "Dynamic Tokens", "font-weight": "800", "font-size": "1.4rem", "margin-bottom": "1rem" },
-                "p": { "texto": "Centralize your design system with a reactive variable resolution system.", "opacity": "0.4", "line-height": "1.5" }
-            },
-            "f3": {
-                "background-color": "$colors.surface",
-                "padding": "3rem 2.5rem",
-                "border-radius": "24px",
-                "border": "1px solid $colors.border",
-                "text-align": "left",
-                "transition": "all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
-                "hover": { "transform": "translateY(-12px)", "border-color": "$colors.accent", "background-color": "rgba(255,255,255,0.05)" },
-                "icon": { "texto": "∞", "color": "$colors.accent", "font-size": "2rem", "margin-bottom": "1.5rem" },
-                "h": { "texto": "Keyframe Engine", "font-weight": "800", "font-size": "1.4rem", "margin-bottom": "1rem" },
-                "p": { "texto": "Define complex animations in JSON and let the engine inject the CSS.", "opacity": "0.4", "line-height": "1.5" }
-            }
+        "cursor-follow": {
+            "nombre": "Cursor Glow",
+            "position": "fixed",
+            "width": "100px",
+            "height": "100px",
+            "background": "$colors.accent",
+            "filter": "blur(80px)",
+            "border-radius": "50%",
+            "top": "calc(var(--nexus-mouse-y) * 1px - 50px)",
+            "left": "calc(var(--nexus-mouse-x) * 1px - 50px)",
+            "pointer-events": "none",
+            "z-index": "10"
         }
     },
-    "footer": {
-        "padding": "4rem $spacing.page",
-        "border-top": "1px solid $colors.border",
-        "display": "flex",
-        "justify-content": "space-between",
-        "align-items": "center",
-        "opacity": "0.3",
-        "font-size": "0.75rem",
-        "font-weight": "500",
-        "left": { "texto": "© 2025 NATIVE TRANSCRIPTOR V5" },
-        "right": { "texto": "ENGINEERED FOR PERFORMANCE" }
+    "cards": {
+        "nombre": "Reactive Grid",
+        "display": "grid",
+        "grid-template-columns": "repeat(3, 1fr)",
+        "gap": "2rem",
+        "padding": "100px 10%",
+        "responsive": {
+            "0": { "grid-template-columns": "1fr" },
+            "1024": { "grid-template-columns": "repeat(3, 1fr)" }
+        },
+        "card1": {
+            "_seed": "glass",
+            "padding": "3rem",
+            "border-radius": "32px",
+            "transform": "perspective(1000px) rotateX(calc((var(--nexus-mouse-y) - 500) * -0.02deg)) rotateY(calc((var(--nexus-mouse-x) - 500) * 0.02deg))",
+            "h": { "texto": "Environmental Mapping", "font-weight": "800", "margin-bottom": "1rem" },
+            "p": { "texto": "Direct CSS variable injection: Scroll, Mouse, Time.", "opacity": "0.4" }
+        },
+        "card2": {
+            "_seed": "glass",
+            "padding": "3rem",
+            "border-radius": "32px",
+            "transform": "translateY(calc(var(--nexus-scroll) * 0.1px))",
+            "h": { "texto": "Meta-Seeds", "font-weight": "800", "margin-bottom": "1rem" },
+            "p": { "texto": "Architectural patterns expanded into native CSS.", "opacity": "0.4" }
+        },
+        "card3": {
+            "_seed": "glass",
+            "padding": "3rem",
+            "border-radius": "32px",
+            "h": { "texto": "Infinite Potential", "font-weight": "800", "margin-bottom": "1rem" },
+            "p": { "texto": "Your imagination is the only boundary.", "opacity": "0.4" },
+            "timer": {
+                "texto": "SYSTEM_TIME: 0.00",
+                "margin-top": "2rem",
+                "font-family": "'JetBrains Mono', monospace",
+                "font-size": "0.8rem",
+                "color": "$colors.accent",
+                "animation": "pulse 2s infinite"
+            }
+        }
     }
 }

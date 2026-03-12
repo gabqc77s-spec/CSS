@@ -1,21 +1,46 @@
 /**
- * TRANSCRIPTOR ENGINE V5 PRO (NATIVE FIDELITY)
- * The ultimate JSON-to-DOM rendering engine.
- * 100% Native CSS Property Support.
+ * NEXUS V6 ENGINE - THE REACTIVE TRANSCRIPTOR
+ * Beyond Static. Beyond Imaginable.
+ * A Living Design System powered by Native CSS + JSON.
  */
 
 let currentContent = null;
 let hoveredNodeId = null;
 let activeNodeId = null;
-let currentViewportWidth = window.innerWidth;
+let mouseX = 0, mouseY = 0;
+let scrollY = 0;
+let startTime = Date.now();
 
 /**
- * Resolve variables and calculate responsive values
+ * META-SEEDS: Architectural Design Patterns
+ * These are expanded into native CSS properties before rendering.
+ */
+const SEEDS = {
+    "glass": {
+        "backdrop-filter": "blur(20px) saturate(180%)",
+        "background-color": "rgba(255, 255, 255, 0.05)",
+        "border": "1px solid rgba(255, 255, 255, 0.1)",
+        "box-shadow": "0 8px 32px 0 rgba(0, 0, 0, 0.37)"
+    },
+    "neo": {
+        "background": "#e0e0e0",
+        "box-shadow": "20px 20px 60px #bebebe, -20px -20px 60px #ffffff",
+        "border-radius": "50px"
+    },
+    "cyber": {
+        "background": "linear-gradient(45deg, #ff003c 0%, #00f0ff 100%)",
+        "clip-path": "polygon(0% 0%, 100% 0%, 100% 75%, 75% 100%, 0% 100%)",
+        "filter": "drop-shadow(0 0 10px #ff003c)"
+    }
+};
+
+/**
+ * RESOLUTION ENGINE
  */
 function resolveValue(val, variables = {}) {
     if (typeof val !== 'string') return val;
 
-    // Resolve variable references: e.g., "$colors.primary"
+    // 1. Resolve $variables
     if (val.startsWith('$')) {
         const path = val.substring(1).split('.');
         let current = variables;
@@ -29,10 +54,9 @@ function resolveValue(val, variables = {}) {
 }
 
 /**
- * Core Transcriptor
+ * CORE TRANSCRIPTOR V6
  */
 function transcribir(data, container, path = 'pagina', variables = {}) {
-    // Use path-based ID to avoid collisions (e.g. node-pagina-header-logo)
     const elementId = `node-${path.replace(/\./g, '-')}`;
     let el = document.getElementById(elementId);
     const localVariables = { ...variables, ...(data.variables || {}) };
@@ -40,13 +64,12 @@ function transcribir(data, container, path = 'pagina', variables = {}) {
     if (!el) {
         let tagName = data.tagName || 'div';
         if (!data.tagName) {
-            const idLower = id.toLowerCase();
-            if (idLower.includes('boton') || idLower.includes('cta') || idLower.includes('btn')) tagName = 'button';
-            else if (idLower.includes('imagen') || idLower.includes('img') || idLower.includes('foto')) tagName = 'img';
-            else if (idLower.includes('input')) tagName = 'input';
-            else if (idLower.includes('titulo') || idLower.includes('title')) tagName = 'h2';
-            else if (idLower.includes('parrafo') || idLower.includes('text')) tagName = 'p';
-            else if (idLower.includes('enlace') || idLower.includes('link')) tagName = 'a';
+            const idLower = path.toLowerCase();
+            if (idLower.includes('boton') || idLower.includes('cta')) tagName = 'button';
+            else if (idLower.includes('imagen') || idLower.includes('img')) tagName = 'img';
+            else if (idLower.includes('titulo')) tagName = 'h2';
+            else if (idLower.includes('parrafo')) tagName = 'p';
+            else if (idLower.includes('enlace')) tagName = 'a';
         }
         el = document.createElement(tagName);
         el.id = elementId;
@@ -57,138 +80,141 @@ function transcribir(data, container, path = 'pagina', variables = {}) {
     const hijos = {};
     let texto = '';
 
-    // Pass 1: Categorize
-    for (const key in data) {
-        const val = data[key];
+    // Step 0: Expand Seeds
+    const dataExpanded = { ...data };
+    if (data._seed && SEEDS[data._seed]) {
+        Object.assign(dataExpanded, SEEDS[data._seed]);
+    }
 
-        if (key === 'nombre' || key === 'tagName' || key === 'variables') continue;
+    // Step 1: Categorize
+    for (const key in dataExpanded) {
+        const val = dataExpanded[key];
+        if (['nombre', 'tagName', 'variables', '_seed'].includes(key)) continue;
         if (key === 'texto') {
             texto = resolveValue(val, localVariables);
             continue;
         }
 
         if (typeof val === 'object' && val !== null) {
-            // Special V4/V5 Keys
-            if (['hover', 'active', 'click', 'scroll', 'responsive', 'animations'].includes(key)) continue;
+            if (['hover', 'active', 'responsive', 'animations'].includes(key)) continue;
             hijos[key] = val;
         } else {
-            // NATIVE CSS PROPERTIES (Kebab-case or Camel-case supported via setProperty)
             estilos[key] = resolveValue(val, localVariables);
         }
     }
 
-    // Pass 2: Apply Responsive Overrides
+    // Step 2: Responsive Overrides
     if (data.responsive) {
-        const breakpoints = Object.keys(data.responsive).sort((a, b) => parseInt(a) - parseInt(b));
-        for (const bp of breakpoints) {
-            if (currentViewportWidth >= parseInt(bp)) {
-                const bpStyles = data.responsive[bp];
-                for (const k in bpStyles) {
-                    estilos[k] = resolveValue(bpStyles[k], localVariables);
-                }
+        const vw = window.innerWidth;
+        const bps = Object.keys(data.responsive).sort((a, b) => parseInt(a) - parseInt(b));
+        for (const bp of bps) {
+            if (vw >= parseInt(bp)) {
+                for (const k in data.responsive[bp]) estilos[k] = resolveValue(data.responsive[bp][k], localVariables);
             }
         }
     }
 
-    // Apply Base Styles
+    // Step 3: Interaction Overrides
+    if (data.hover && hoveredNodeId === el.id) {
+        for (const k in data.hover) estilos[k] = resolveValue(data.hover[k], localVariables);
+    }
+    if (data.active && activeNodeId === el.id) {
+        for (const k in data.active) estilos[k] = resolveValue(data.active[k], localVariables);
+    }
+
+    // Step 4: Apply Native CSS via setProperty
+    // Using setProperty ensures we can use standard kebab-case from JSON
     el.style.cssText = '';
     for (const key in estilos) {
         el.style.setProperty(key, estilos[key]);
     }
 
-    // Pass 3: Interaction States (Applied via setProperty for native support)
-    function applyStateStyles(stateObj) {
-        if (!stateObj) return;
-        for (const k in stateObj) {
-            el.style.setProperty(k, resolveValue(stateObj[k], localVariables));
-        }
-    }
-
-    if (data.hover && hoveredNodeId === el.id) applyStateStyles(data.hover);
-    if (data.active && activeNodeId === el.id) applyStateStyles(data.active);
-
-    // Event Listeners
+    // Interaction Listeners
     el.onmouseenter = (e) => { e.stopPropagation(); hoveredNodeId = el.id; };
-    el.onmouseleave = (e) => { if (hoveredNodeId === el.id) hoveredNodeId = null; };
+    el.onmouseleave = () => { if (hoveredNodeId === el.id) hoveredNodeId = null; };
     el.onmousedown = (e) => { e.stopPropagation(); activeNodeId = el.id; };
-    el.onmouseup = (e) => { if (activeNodeId === el.id) activeNodeId = null; };
+    el.onmouseup = () => { if (activeNodeId === el.id) activeNodeId = null; };
 
-    // Pass 4: Content
-    if (el.tagName === 'IMG') {
-        if (texto && el.src !== texto) el.src = texto;
-    } else if (el.tagName === 'INPUT') {
-        if (texto && el.value !== texto) el.value = texto;
-    } else {
+    // Step 5: Content
+    if (el.tagName === 'IMG' && texto) { if (el.src !== texto) el.src = texto; }
+    else {
         let textNode = Array.from(el.childNodes).find(n => n.nodeType === Node.TEXT_NODE);
-        if (texto !== undefined && texto !== null && texto !== '') {
-            if (textNode) {
-                if (textNode.textContent !== texto) textNode.textContent = texto;
-            } else {
-                el.prepend(document.createTextNode(texto));
-            }
-        } else if (textNode) {
-            el.removeChild(textNode);
-        }
+        if (texto) {
+            if (textNode) { if (textNode.textContent !== texto) textNode.textContent = texto; }
+            else el.prepend(document.createTextNode(texto));
+        } else if (textNode) el.removeChild(textNode);
     }
 
-    // Pass 5: Children Reconciliation
+    // Step 6: Children Reconciliation
     const currentHijosIds = Object.keys(hijos).map(k => `node-${path.replace(/\./g, '-')}-${k}`);
     Array.from(el.children).forEach(child => {
-        // Only remove children that belong to our path-based ID system
         if (child.id.startsWith(`node-${path.replace(/\./g, '-')}-`) && !currentHijosIds.includes(child.id)) {
             el.removeChild(child);
         }
     });
-
-    for (const key in hijos) {
-        transcribir(hijos[key], el, `${path}.${key}`, localVariables);
-    }
+    for (const key in hijos) transcribir(hijos[key], el, `${path}.${key}`, localVariables);
 }
 
 /**
- * Global CSS Generator (Animations, etc.)
+ * ENVIRONMENTAL ENGINE
+ * The pulse of the system.
+ */
+function updateEnvironment() {
+    const root = document.documentElement;
+    const time = (Date.now() - startTime) / 1000;
+
+    // Inject Living Variables
+    root.style.setProperty('--nexus-time', time);
+    root.style.setProperty('--nexus-scroll', window.scrollY);
+    root.style.setProperty('--nexus-mouse-x', mouseX);
+    root.style.setProperty('--nexus-mouse-y', mouseY);
+    root.style.setProperty('--nexus-vh', window.innerHeight);
+    root.style.setProperty('--nexus-vw', window.innerWidth);
+}
+
+document.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; });
+
+/**
+ * GLOBAL CSS GENERATOR
  */
 function updateGlobalStyles(data) {
-    let styleEl = document.getElementById('v5-global-styles');
+    let styleEl = document.getElementById('nexus-global');
     if (!styleEl) {
         styleEl = document.createElement('style');
-        styleEl.id = 'v5-global-styles';
+        styleEl.id = 'nexus-global';
         document.head.appendChild(styleEl);
     }
 
     let css = '';
     if (data.animations) {
-        for (const animName in data.animations) {
-            css += `@keyframes ${animName} {\n`;
-            const keyframes = data.animations[animName];
-            for (const step in keyframes) {
+        for (const name in data.animations) {
+            css += `@keyframes ${name} {\n`;
+            for (const step in data.animations[name]) {
                 css += `  ${step} {\n`;
-                for (const prop in keyframes[step]) {
-                    css += `    ${prop}: ${keyframes[step][prop]};\n`;
+                for (const prop in data.animations[name][step]) {
+                    css += `    ${prop}: ${data.animations[name][step][prop]};\n`;
                 }
                 css += `  }\n`;
             }
             css += `}\n`;
         }
     }
-
     if (styleEl.innerHTML !== css) styleEl.innerHTML = css;
 }
 
-let lastData = '';
-function loop() {
-    const app = document.getElementById('app');
-    currentViewportWidth = window.innerWidth;
-
-    if (currentContent && app) {
-        const dataStr = JSON.stringify(currentContent) + hoveredNodeId + activeNodeId + currentViewportWidth;
-        if (dataStr !== lastData) {
+let lastState = '';
+function mainLoop() {
+    updateEnvironment();
+    if (currentContent) {
+        // Only re-transcribe if data changes, but environment variables update every frame via CSS
+        const stateStr = JSON.stringify(currentContent) + hoveredNodeId + activeNodeId;
+        if (stateStr !== lastState) {
             updateGlobalStyles(currentContent);
-            transcribir(currentContent, app, 'pagina', currentContent.variables || {});
-            lastData = dataStr;
+            transcribir(currentContent, document.getElementById('app'), 'pagina', currentContent.variables || {});
+            lastState = stateStr;
         }
     }
-    requestAnimationFrame(loop);
+    requestAnimationFrame(mainLoop);
 }
 
 window.addEventListener('message', (e) => {
@@ -199,8 +225,8 @@ async function init() {
     try {
         const res = await fetch('content.json');
         if (res.ok) currentContent = await res.json();
-    } catch (e) {}
-    loop();
+    } catch(e) {}
+    mainLoop();
 }
 
 init();
