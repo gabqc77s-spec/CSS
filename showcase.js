@@ -403,7 +403,20 @@ function updateGlobalStyles(data) {
     if (styleEl.innerHTML !== css) styleEl.innerHTML = css;
 }
 
-window.addEventListener('message', (e) => { if (e.data.type === 'update-content') currentContent = e.data.content; });
+window.addEventListener('message', (e) => {
+    if (e.data.type === 'update-content') currentContent = e.data.content;
+    if (e.data.type === 'get-rect') {
+        const el = document.getElementById(`node-${e.data.path.replace(/\./g, '-')}`);
+        if (el) {
+            const rect = el.getBoundingClientRect();
+            window.parent.postMessage({
+                type: 'rect-result',
+                rect: { left: rect.left, top: rect.top, width: rect.width, height: rect.height },
+                path: e.data.path
+            }, '*');
+        }
+    }
+});
 async function init() {
     if (!currentContent) {
         try {

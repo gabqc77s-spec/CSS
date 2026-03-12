@@ -329,6 +329,67 @@
         .btn-group-item:last-child { border-right: none; }
         .btn-group-item.active { background: var(--accent); color: #000; }
 
+        /* Box Model UI */
+        .box-model {
+            position: relative;
+            width: 100%;
+            height: 120px;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.5rem;
+            color: var(--text-dim);
+            padding: 10px;
+        }
+        .box-rect {
+            position: relative;
+            border: 1px dashed var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .box-margin { width: 100%; height: 100%; padding: 20px; background: rgba(217, 119, 6, 0.05); }
+        .box-padding { width: 100%; height: 100%; padding: 20px; background: rgba(45, 138, 78, 0.05); border: 1px solid rgba(45, 138, 78, 0.2); }
+        .box-inner { width: 40px; height: 20px; background: rgba(0, 240, 255, 0.1); border: 1px solid var(--accent); border-radius: 2px; }
+        .box-label { position: absolute; cursor: pointer; transition: color 0.2s; }
+        .box-label:hover { color: var(--accent); }
+        .box-label.top { top: 4px; left: 50%; transform: translateX(-50%); }
+        .box-label.bottom { bottom: 4px; left: 50%; transform: translateX(-50%); }
+        .box-label.left { left: 4px; top: 50%; transform: translateY(-50%); }
+        .box-label.right { right: 4px; top: 50%; transform: translateY(-50%); }
+
+        /* Floating Toolbar */
+        .float-toolbar {
+            position: absolute;
+            background: #1a1a20;
+            border: 1px solid var(--accent);
+            border-radius: 6px;
+            display: flex;
+            gap: 2px;
+            padding: 4px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            z-index: 2000;
+            pointer-events: auto;
+            transform: translate(-50%, -120%);
+        }
+        .float-btn {
+            background: transparent;
+            border: none;
+            color: #fff;
+            padding: 6px 10px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .float-btn:hover { background: rgba(255,255,255,0.05); color: var(--accent); }
+
         /* ─── Tree Nodes ─── */
         .tree-node { margin-left: 12px; position: relative; }
         .tree-node::before {
@@ -432,6 +493,55 @@
             border-radius: 6px;
         }
         .catalog-item:hover { background: rgba(255,255,255,0.05); }
+
+        /* Visual Catalog */
+        .visual-catalog {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            padding: 4px;
+        }
+        .catalog-card {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+        .catalog-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+        }
+        .catalog-card-preview {
+            height: 60px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .catalog-card-info {
+            display: flex;
+            flex-direction: column;
+        }
+        .catalog-card-name {
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: #fff;
+        }
+        .catalog-card-desc {
+            font-size: 0.55rem;
+            color: var(--text-dim);
+        }
 
         /* Scrollbar */
         ::-webkit-scrollbar { width: 4px; }
@@ -548,46 +658,72 @@
 
         const PRESETS = {
             'Glassmorphic Card': {
-                "nombre": "Tarjeta Cristal",
-                "background": "rgba(255, 255, 255, 0.05)",
-                "backdrop-filter": "blur(12px)",
-                "border": "1px solid rgba(255, 255, 255, 0.1)",
-                "border-radius": "24px",
-                "padding": "2rem",
-                "display": "flex",
-                "flex-direction": "column",
-                "gap": "1rem",
-                "box-shadow": "0 20px 50px rgba(0,0,0,0.3)",
-                "titulo": { "texto": "Nuevo Módulo", "font-size": "1.5rem", "font-weight": "700" },
-                "contenido": { "texto": "Este es un componente generado dinámicamente con estilos de cristal.", "opacity": "0.6", "font-size": "0.9rem" }
+                "icon": "💎",
+                "desc": "Translucent frosted glass panel",
+                "data": {
+                    "nombre": "Tarjeta Cristal",
+                    "background": "rgba(255, 255, 255, 0.05)",
+                    "backdrop-filter": "blur(12px)",
+                    "border": "1px solid rgba(255, 255, 255, 0.1)",
+                    "border-radius": "24px",
+                    "padding": "2rem",
+                    "display": "flex",
+                    "flex-direction": "column",
+                    "gap": "1rem",
+                    "box-shadow": "0 20px 50px rgba(0,0,0,0.3)",
+                    "titulo": { "texto": "Nuevo Módulo", "font-size": "1.5rem", "font-weight": "700" },
+                    "contenido": { "texto": "Este es un componente generado dinámicamente con estilos de cristal.", "opacity": "0.6", "font-size": "0.9rem" }
+                }
             },
             'Neural Hero': {
-                "nombre": "Sección Hero",
-                "width": "100%", "height": "80vh",
-                "display": "flex", "flex-direction": "column", "align-items": "center", "justify-content": "center",
-                "background": "radial-gradient(circle at math(mx * 100)% math(my * 100)%, rgba(0, 240, 255, 0.15), transparent 50%)",
-                "titulo": {
-                    "texto": "TRANSCRIPCIÓN INFINITA",
-                    "font-size": "5rem", "font-weight": "900", "letter-spacing": "-2px",
-                    "transform": "translateY(math(sin(time) * 10)px)"
+                "icon": "🧠",
+                "desc": "Dynamic radial background with math",
+                "data": {
+                    "nombre": "Sección Hero",
+                    "width": "100%", "height": "80vh",
+                    "display": "flex", "flex-direction": "column", "align-items": "center", "justify-content": "center",
+                    "background": "radial-gradient(circle at math(mx * 100)% math(my * 100)%, rgba(0, 240, 255, 0.15), transparent 50%)",
+                    "titulo": {
+                        "texto": "TRANSCRIPCIÓN INFINITA",
+                        "font-size": "5rem", "font-weight": "900", "letter-spacing": "-2px",
+                        "transform": "translateY(math(sin(time) * 10)px)"
+                    }
                 }
             },
             'Physics Sandbox': {
-                "nombre": "Sandbox Físico",
-                "width": "100%", "height": "400px", "position": "relative", "overflow": "hidden", "background": "#050505",
-                "bola": {
-                    "width": "60px", "height": "60px", "border-radius": "50%", "background": "cyan", "position": "absolute",
-                    "left": "math(50 + sin(time * 2) * 40)%",
-                    "top": "math(50 + cos(time * 3) * 30)%",
-                    "box-shadow": "0 0 30px cyan"
+                "icon": "⚽",
+                "desc": "Math-driven animation container",
+                "data": {
+                    "nombre": "Sandbox Físico",
+                    "width": "100%", "height": "400px", "position": "relative", "overflow": "hidden", "background": "#050505",
+                    "bola": {
+                        "width": "60px", "height": "60px", "border-radius": "50%", "background": "cyan", "position": "absolute",
+                        "left": "math(50 + sin(time * 2) * 40)%",
+                        "top": "math(50 + cos(time * 3) * 30)%",
+                        "box-shadow": "0 0 30px cyan"
+                    }
                 }
             },
             'Neon Button': {
-                "nombre": "Botón Neón",
-                "padding": "12px 30px", "border-radius": "100px", "background": "transparent",
-                "border": "2px solid #00f0ff", "color": "#00f0ff", "font-weight": "700", "cursor": "pointer",
-                "transition": "all 0.3s",
-                "hover": { "background": "#00f0ff", "color": "#000", "box-shadow": "0 0 20px #00f0ff" }
+                "icon": "⚡",
+                "desc": "Cyan glow with interactive hover",
+                "data": {
+                    "nombre": "Botón Neón",
+                    "padding": "12px 30px", "border-radius": "100px", "background": "transparent",
+                    "border": "2px solid #00f0ff", "color": "#00f0ff", "font-weight": "700", "cursor": "pointer",
+                    "transition": "all 0.3s",
+                    "hover": { "background": "#00f0ff", "color": "#000", "box-shadow": "0 0 20px #00f0ff" }
+                }
+            },
+            'Flex Layout': {
+                "icon": "🍱",
+                "desc": "Responsive flexbox container",
+                "data": {
+                    "nombre": "Flex Container",
+                    "display": "flex", "gap": "1rem", "padding": "1rem",
+                    "child_1": { "width": "50px", "height": "50px", "background": "var(--accent)" },
+                    "child_2": { "width": "50px", "height": "50px", "background": "var(--purple)" }
+                }
             }
         };
 
@@ -601,6 +737,14 @@
             'Tipografía': ['font-family', 'font-size', 'font-weight', 'line-height', 'color', 'text-align', 'letter-spacing', 'text-transform', 'text-decoration'],
             'Efectos': ['background', 'background-image', 'background-size', 'background-position', 'background-repeat', 'border', 'border-radius', 'box-shadow', 'opacity', 'transition', 'transform', 'filter', 'backdrop-filter', 'overflow', 'cursor', 'clip-path']
         };
+
+        const FONT_FAMILIES = [
+            "'Inter', sans-serif",
+            "'JetBrains Mono', monospace",
+            "'Playfair Display', serif",
+            "system-ui, -apple-system, sans-serif",
+            "'Bebas Neue', cursive"
+        ];
 
         async function init() {
             if (!contentData) {
@@ -633,9 +777,55 @@
             }
             const iframe = document.getElementById('preview');
             iframe.contentWindow.postMessage({ type: 'update-content', content: contentData }, '*');
+            updateFloatingToolbar();
+        }
+
+        function updateFloatingToolbar() {
+            const existing = document.getElementById('floating-toolbar');
+            if (existing) existing.remove();
+
+            if (!selectedPath) return;
+
+            // We need to get the position of the selected element from the iframe
+            const iframe = document.getElementById('preview');
+            iframe.contentWindow.postMessage({ type: 'get-rect', path: selectedPath }, '*');
         }
 
         window.addEventListener('message', (e) => {
+            if (e.data.type === 'rect-result') {
+                const { rect, path } = e.data;
+                const iframeRect = document.getElementById('preview').getBoundingClientRect();
+                const container = document.querySelector('.preview-iframe-wrap');
+
+                let toolbar = document.getElementById('floating-toolbar');
+                if (!toolbar) {
+                    toolbar = document.createElement('div');
+                    toolbar.id = 'floating-toolbar';
+                    toolbar.className = 'float-toolbar';
+                    document.body.appendChild(toolbar);
+                }
+
+                toolbar.style.left = (iframeRect.left + rect.left + rect.width / 2) + 'px';
+                toolbar.style.top = (iframeRect.top + rect.top) + 'px';
+
+                const obj = getObjPath(contentData, path);
+
+                toolbar.innerHTML = `
+                    <button class="float-btn" id="float-dup">⧉ <span>Duplicate</span></button>
+                    <button class="float-btn" id="float-txt">✎ <span>Text</span></button>
+                    <button class="float-btn" id="float-del" style="color:#ff4a4a">✕ <span>Delete</span></button>
+                `;
+
+                toolbar.querySelector('#float-dup').onclick = () => duplicateNode(path);
+                toolbar.querySelector('#float-del').onclick = () => deleteNode(path);
+                toolbar.querySelector('#float-txt').onclick = () => {
+                    const newTxt = prompt('Edit text:', obj.texto || '');
+                    if (newTxt !== null) {
+                        obj.texto = newTxt;
+                        refreshAll();
+                    }
+                };
+            }
             if (e.data.type === 'sync-data') {
                 document.getElementById('data-inspector').textContent = JSON.stringify(e.data.data.state.variables, null, 2);
                 document.getElementById('env-time').textContent = e.data.data.state.time?.toFixed(1) + 's' || '0s';
@@ -784,7 +974,13 @@
                 groupDiv.innerHTML = `<div class="prop-group-title">${groupName}</div>`;
                 let hasProps = false;
 
+                if (groupName === 'Dimensiones') {
+                    hasProps = true;
+                    groupDiv.appendChild(createBoxModelUI(target, obj));
+                }
+
                 NATIVE_GROUPS[groupName].forEach(key => {
+                    if (['padding', 'margin'].includes(key)) { usedKeys.add(key); return; }
                     usedKeys.add(key);
                     const val = target[key] !== undefined ? target[key] : (currentEditingState === 'base' ? obj[key] : '');
                     if (val !== undefined || groupName === 'Identidad') {
@@ -868,6 +1064,46 @@
             container.appendChild(seedDiv);
         }
 
+        function createBoxModelUI(target, obj) {
+            const container = document.createElement('div');
+            container.className = 'box-model';
+
+            const getVal = (prop) => target[prop] || obj[prop] || '0';
+
+            container.innerHTML = `
+                <div class="box-rect box-margin">
+                    <span style="position:absolute; top:2px; left:4px; opacity:0.3; scale:0.8">MARGIN</span>
+                    <div class="box-label top" data-prop="margin-top">${getVal('margin-top')}</div>
+                    <div class="box-label bottom" data-prop="margin-bottom">${getVal('margin-bottom')}</div>
+                    <div class="box-label left" data-prop="margin-left">${getVal('margin-left')}</div>
+                    <div class="box-label right" data-prop="margin-right">${getVal('margin-right')}</div>
+
+                    <div class="box-rect box-padding">
+                        <span style="position:absolute; top:2px; left:4px; opacity:0.3; scale:0.8">PADDING</span>
+                        <div class="box-label top" data-prop="padding-top">${getVal('padding-top')}</div>
+                        <div class="box-label bottom" data-prop="padding-bottom">${getVal('padding-bottom')}</div>
+                        <div class="box-label left" data-prop="padding-left">${getVal('padding-left')}</div>
+                        <div class="box-label right" data-prop="padding-right">${getVal('padding-right')}</div>
+                        <div class="box-inner"></div>
+                    </div>
+                </div>
+            `;
+
+            container.querySelectorAll('.box-label').forEach(label => {
+                label.onclick = () => {
+                    const prop = label.dataset.prop;
+                    const newVal = prompt(`Set ${prop}:`, label.textContent);
+                    if (newVal !== null) {
+                        target[prop] = newVal;
+                        label.textContent = newVal;
+                        sendToPreview();
+                    }
+                };
+            });
+
+            return container;
+        }
+
         function createPropRow(key, val, target, obj) {
             const row = document.createElement('div');
             row.className = 'prop-row';
@@ -893,12 +1129,39 @@
                 'justify-content': ['start', 'center', 'end', 'between', 'around'],
                 'align-items': ['start', 'center', 'end', 'stretch'],
                 'position': ['relative', 'absolute', 'fixed', 'sticky'],
-                'overflow': ['visible', 'hidden', 'auto']
+            'overflow': ['visible', 'hidden', 'auto'],
+            'text-align': ['left', 'center', 'right', 'justify']
             };
 
             const keywordMap = {
                 'start': 'flex-start', 'end': 'flex-end', 'between': 'space-between', 'around': 'space-around'
             };
+
+        const KEYWORD_ICONS = {
+            'justify-content': {
+                'start': `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 2v20M6 12h16M18 7l4 5-4 5"/></svg>`,
+                'center': `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M4 12h16M7 17l-3-5 3-5M17 7l3 5-3 5"/></svg>`,
+                'end': `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2v20M18 12H2M6 17l-4-5 4-5"/></svg>`,
+                'between': `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 2v20M22 2v20M10 12h4M6 12h1M17 12h1"/></svg>`,
+                'around': `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 2v20M22 2v20M7 12h2M15 12h2"/></svg>`
+            },
+            'align-items': {
+                'start': `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 2h20M12 6v16M7 18l5 4 5-4"/></svg>`,
+                'center': `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h20M12 4v16M7 7l5-3 5 3M17 17l-5 3-5-3"/></svg>`,
+                'end': `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 22h20M12 18V2M17 6l-5-4-5 4"/></svg>`,
+                'stretch': `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 2h20M2 22h20M12 2v20"/></svg>`
+            },
+            'flex-direction': {
+                'row': `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M15 7l5 5-5 5"/></svg>`,
+                'column': `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M7 14l5 5 5-5"/></svg>`
+            },
+            'text-align': {
+                'left': `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h10M4 18h16"/></svg>`,
+                'center': `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M7 12h10M4 18h16"/></svg>`,
+                'right': `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M10 12h10M4 18h16"/></svg>`,
+                'justify': `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>`
+            }
+        };
 
             if (keywordProps[key]) {
                 const group = document.createElement('div');
@@ -907,7 +1170,14 @@
                     const btn = document.createElement('button');
                     btn.className = 'btn-group-item';
                     if (val === opt || val === keywordMap[opt]) btn.classList.add('active');
+
+                if (KEYWORD_ICONS[key] && KEYWORD_ICONS[key][opt]) {
+                    btn.innerHTML = KEYWORD_ICONS[key][opt];
+                    btn.title = opt;
+                } else {
                     btn.textContent = opt;
+                }
+
                     btn.onclick = () => {
                         target[key] = keywordMap[opt] || opt;
                         Array.from(group.children).forEach(b => b.classList.remove('active'));
@@ -957,8 +1227,66 @@
                 sliderContainer.appendChild(textInput);
                 wrap.appendChild(sliderContainer);
             }
-            // 3. Color Pickers
-            else if (key.includes('color') || key === 'background' || key.includes('shadow')) {
+            // 3. Font Family Picker
+            else if (key === 'font-family') {
+                const select = document.createElement('select');
+                select.className = 'input-base';
+                FONT_FAMILIES.forEach(font => {
+                    const opt = document.createElement('option');
+                    opt.value = font;
+                    opt.textContent = font.split(',')[0].replace(/'/g, '');
+                    if (val === font) opt.selected = true;
+                    select.appendChild(opt);
+                });
+                select.onchange = () => { target[key] = select.value; sendToPreview(); };
+                wrap.appendChild(select);
+            }
+            // 4. Box Shadow Builder
+            else if (key === 'box-shadow') {
+                const builder = document.createElement('div');
+                builder.style.cssText = 'display:grid; grid-template-columns: 1fr 1fr; gap:4px; width:100%';
+
+                // Parse existing: "0px 10px 20px rgba(0,0,0,0.5)"
+                const parts = (val || '0px 0px 0px #000').split(' ');
+                const vals = {
+                    x: parts[0] || '0px',
+                    y: parts[1] || '0px',
+                    blur: parts[2] || '0px',
+                    color: parts.slice(3).join(' ') || '#000000'
+                };
+
+                const createSub = (label, pKey) => {
+                    const inp = document.createElement('input');
+                    inp.className = 'input-base';
+                    inp.style.fontSize = '0.55rem';
+                    inp.style.padding = '2px 6px';
+                    inp.placeholder = label;
+                    inp.value = vals[pKey];
+                    inp.oninput = () => {
+                        vals[pKey] = inp.value;
+                        target[key] = `${vals.x} ${vals.y} ${vals.blur} ${vals.color}`;
+                        sendToPreview();
+                    };
+                    return inp;
+                };
+
+                builder.appendChild(createSub('X', 'x'));
+                builder.appendChild(createSub('Y', 'y'));
+                builder.appendChild(createSub('Blur', 'blur'));
+
+                const cp = document.createElement('input');
+                cp.type = 'color';
+                cp.style.height = '20px';
+                cp.oninput = () => {
+                    vals.color = cp.value;
+                    target[key] = `${vals.x} ${vals.y} ${vals.blur} ${vals.color}`;
+                    sendToPreview();
+                };
+                builder.appendChild(cp);
+                wrap.appendChild(builder);
+            }
+            // 5. Color Pickers
+            else if (key.includes('color') || key === 'background') {
                 const input = document.createElement('input');
                 input.className = 'input-base';
                 input.type = 'text';
@@ -1020,25 +1348,37 @@
             const container = document.getElementById('templates-tree');
             container.innerHTML = '';
 
-            // 1. Static Presets Section
-            const presetGroup = document.createElement('div');
-            presetGroup.className = 'prop-group';
-            presetGroup.innerHTML = `<div class="prop-group-title">Component Presets</div>`;
+            // 1. Visual Catalog Section
+            const catalogTitle = document.createElement('div');
+            catalogTitle.className = 'prop-group-title';
+            catalogTitle.textContent = 'Component Library';
+            container.appendChild(catalogTitle);
+
+            const catalogGrid = document.createElement('div');
+            catalogGrid.className = 'visual-catalog';
+
             for (const name in PRESETS) {
-                const item = document.createElement('div');
-                item.className = 'tree-label';
-                item.style.fontSize = '0.7rem';
-                item.innerHTML = `<span class="tree-icon">✦</span> ${name}`;
-                item.onclick = () => {
-                    if (!selectedPath) return alert('Selecciona un nodo padre en el árbol primero');
+                const preset = PRESETS[name];
+                const card = document.createElement('div');
+                card.className = 'catalog-card';
+                card.innerHTML = `
+                    <div class="catalog-card-preview">${preset.icon || '✦'}</div>
+                    <div class="catalog-card-info">
+                        <div class="catalog-card-name">${name}</div>
+                        <div class="catalog-card-desc">${preset.desc || ''}</div>
+                    </div>
+                `;
+                card.onclick = () => {
+                    if (!selectedPath) return alert('Select a parent node in the Layers tree first');
                     const parent = getObjPath(contentData, selectedPath);
                     const safeName = name.toLowerCase().replace(/\s/g, '_') + '_' + Date.now().toString().slice(-4);
-                    parent[safeName] = JSON.parse(JSON.stringify(PRESETS[name]));
+                    parent[safeName] = JSON.parse(JSON.stringify(preset.data));
+                    parent[safeName].nombre = name;
                     refreshAll();
                 };
-                presetGroup.appendChild(item);
+                catalogGrid.appendChild(card);
             }
-            container.appendChild(presetGroup);
+            container.appendChild(catalogGrid);
 
             // 2. Custom Templates Section
             const temps = (contentData && contentData.templates) || {};
