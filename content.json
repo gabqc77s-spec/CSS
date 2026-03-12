@@ -1,0 +1,177 @@
+{
+    "nombre": "TRANSCRIPTOR PRO V5",
+    "background-color": "$colors.bg",
+    "color": "$colors.text",
+    "font-family": "'Inter', system-ui, sans-serif",
+    "min-height": "100vh",
+    "variables": {
+        "colors": {
+            "bg": "#050505",
+            "text": "#ffffff",
+            "accent": "#4ade80",
+            "surface": "rgba(255,255,255,0.03)",
+            "border": "rgba(255,255,255,0.1)",
+            "glass": "rgba(10, 10, 12, 0.7)"
+        },
+        "spacing": {
+            "page": "8vw",
+            "section": "160px"
+        }
+    },
+    "animations": {
+        "float": {
+            "0%": { "transform": "translateY(0) scale(1)" },
+            "50%": { "transform": "translateY(-20px) scale(1.05)" },
+            "100%": { "transform": "translateY(0) scale(1)" }
+        },
+        "fadeInUp": {
+            "0%": { "opacity": "0", "transform": "translateY(40px)" },
+            "100%": { "opacity": "1", "transform": "translateY(0)" }
+        },
+        "glow": {
+            "0%": { "box-shadow": "0 0 0px rgba(74, 222, 128, 0)" },
+            "50%": { "box-shadow": "0 0 20px rgba(74, 222, 128, 0.3)" },
+            "100%": { "box-shadow": "0 0 0px rgba(74, 222, 128, 0)" }
+        }
+    },
+    "nav": {
+        "nombre": "Navigation",
+        "display": "flex",
+        "justify-content": "space-between",
+        "align-items": "center",
+        "padding": "1.5rem $spacing.page",
+        "position": "fixed",
+        "top": "0",
+        "width": "100%",
+        "z-index": "1000",
+        "backdrop-filter": "blur(24px)",
+        "background-color": "$colors.glass",
+        "border-bottom": "1px solid $colors.border",
+        "logo": {
+            "texto": "NATIVE.JS",
+            "font-weight": "900",
+            "font-size": "1.2rem",
+            "color": "$colors.accent",
+            "letter-spacing": "-1.5px"
+        },
+        "links": {
+            "display": "flex",
+            "gap": "2.5rem",
+            "responsive": {
+                "0": { "display": "none" },
+                "768": { "display": "flex" }
+            },
+            "l1": { "texto": "Engine", "font-size": "0.85rem", "font-weight": "600", "opacity": "0.6", "cursor": "pointer", "hover": { "opacity": "1", "color": "$colors.accent" } },
+            "l2": { "texto": "Fidelity", "font-size": "0.85rem", "font-weight": "600", "opacity": "0.6", "cursor": "pointer", "hover": { "opacity": "1", "color": "$colors.accent" } },
+            "l3": { "texto": "Docs", "font-size": "0.85rem", "font-weight": "600", "opacity": "0.6", "cursor": "pointer", "hover": { "opacity": "1", "color": "$colors.accent" } }
+        },
+        "cta": {
+            "texto": "Get Started",
+            "background-color": "$colors.accent",
+            "color": "#000",
+            "padding": "0.6rem 1.4rem",
+            "border-radius": "8px",
+            "font-size": "0.85rem",
+            "font-weight": "700",
+            "cursor": "pointer",
+            "transition": "transform 0.2s ease",
+            "hover": { "transform": "scale(1.05)", "box-shadow": "0 10px 20px rgba(74, 222, 128, 0.2)" }
+        }
+    },
+    "hero": {
+        "nombre": "Hero",
+        "display": "flex",
+        "flex-direction": "column",
+        "align-items": "center",
+        "justify-content": "center",
+        "padding": "220px $spacing.page 120px",
+        "text-align": "center",
+        "background": "radial-gradient(circle at 50% -20%, rgba(74, 222, 128, 0.15) 0%, transparent 60%)",
+        "tag": {
+            "texto": "THE FUTURE IS NATIVE",
+            "font-size": "0.65rem",
+            "font-weight": "800",
+            "letter-spacing": "0.2em",
+            "color": "$colors.accent",
+            "margin-bottom": "2rem",
+            "animation": "glow 3s infinite ease-in-out"
+        },
+        "title": {
+            "texto": "Pure CSS Fidelity in Structured JSON",
+            "font-size": "clamp(3rem, 8vw, 6.5rem)",
+            "font-weight": "900",
+            "line-height": "0.85",
+            "letter-spacing": "-0.05em",
+            "margin-bottom": "2.5rem",
+            "animation": "fadeInUp 0.8s ease-out"
+        },
+        "description": {
+            "texto": "A professional-grade transcriptor engine that maps standard CSS properties directly from your data model to the DOM. No abstractions, no limitations.",
+            "max-width": "700px",
+            "font-size": "1.25rem",
+            "line-height": "1.6",
+            "opacity": "0.5",
+            "margin-bottom": "4rem",
+            "animation": "fadeInUp 1s ease-out"
+        },
+        "features": {
+            "display": "grid",
+            "grid-template-columns": "repeat(3, 1fr)",
+            "gap": "2rem",
+            "width": "100%",
+            "max-width": "1200px",
+            "responsive": {
+                "0": { "grid-template-columns": "1fr" },
+                "768": { "grid-template-columns": "repeat(3, 1fr)" }
+            },
+            "f1": {
+                "background-color": "$colors.surface",
+                "padding": "3rem 2.5rem",
+                "border-radius": "24px",
+                "border": "1px solid $colors.border",
+                "text-align": "left",
+                "transition": "all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
+                "hover": { "transform": "translateY(-12px)", "border-color": "$colors.accent", "background-color": "rgba(255,255,255,0.05)" },
+                "icon": { "texto": "✦", "color": "$colors.accent", "font-size": "2rem", "margin-bottom": "1.5rem" },
+                "h": { "texto": "Direct Mapping", "font-weight": "800", "font-size": "1.4rem", "margin-bottom": "1rem" },
+                "p": { "texto": "Uses el.style.setProperty() for 1:1 compatibility with W3C standards.", "opacity": "0.4", "line-height": "1.5" }
+            },
+            "f2": {
+                "background-color": "$colors.surface",
+                "padding": "3rem 2.5rem",
+                "border-radius": "24px",
+                "border": "1px solid $colors.border",
+                "text-align": "left",
+                "transition": "all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
+                "hover": { "transform": "translateY(-12px)", "border-color": "$colors.accent", "background-color": "rgba(255,255,255,0.05)" },
+                "icon": { "texto": "⚛", "color": "$colors.accent", "font-size": "2rem", "margin-bottom": "1.5rem" },
+                "h": { "texto": "Dynamic Tokens", "font-weight": "800", "font-size": "1.4rem", "margin-bottom": "1rem" },
+                "p": { "texto": "Centralize your design system with a reactive variable resolution system.", "opacity": "0.4", "line-height": "1.5" }
+            },
+            "f3": {
+                "background-color": "$colors.surface",
+                "padding": "3rem 2.5rem",
+                "border-radius": "24px",
+                "border": "1px solid $colors.border",
+                "text-align": "left",
+                "transition": "all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
+                "hover": { "transform": "translateY(-12px)", "border-color": "$colors.accent", "background-color": "rgba(255,255,255,0.05)" },
+                "icon": { "texto": "∞", "color": "$colors.accent", "font-size": "2rem", "margin-bottom": "1.5rem" },
+                "h": { "texto": "Keyframe Engine", "font-weight": "800", "font-size": "1.4rem", "margin-bottom": "1rem" },
+                "p": { "texto": "Define complex animations in JSON and let the engine inject the CSS.", "opacity": "0.4", "line-height": "1.5" }
+            }
+        }
+    },
+    "footer": {
+        "padding": "4rem $spacing.page",
+        "border-top": "1px solid $colors.border",
+        "display": "flex",
+        "justify-content": "space-between",
+        "align-items": "center",
+        "opacity": "0.3",
+        "font-size": "0.75rem",
+        "font-weight": "500",
+        "left": { "texto": "© 2025 NATIVE TRANSCRIPTOR V5" },
+        "right": { "texto": "ENGINEERED FOR PERFORMANCE" }
+    }
+}

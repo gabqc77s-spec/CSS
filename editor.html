@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>V5 PRO IDE NATIVE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #050505;
+            --sidebar: #0f0f12;
+            --panel: #16161a;
+            --accent: #4ade80;
+            --border: rgba(255,255,255,0.06);
+            --text: #e0e0e0;
+            --text-dim: #888;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* ─── Sidebar ─── */
+        .sidebar {
+            width: 420px;
+            min-width: 420px;
+            background: var(--sidebar);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            z-index: 10;
+        }
+
+        .sidebar-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sidebar-header h1 {
+            font-size: 0.9rem;
+            font-weight: 800;
+            color: var(--accent);
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .sidebar-header h1 span {
+            background: var(--accent);
+            color: #000;
+            font-size: 0.6rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #000;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: 700;
+            transition: transform 0.1s, opacity 0.2s;
+        }
+        .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+
+        /* ─── Viewport Controls ─── */
+        .viewport-controls {
+            padding: 8px;
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            background: rgba(0,0,0,0.3);
+            border-bottom: 1px solid var(--border);
+        }
+        .vp-btn {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            color: var(--text-dim);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.65rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .vp-btn:hover, .vp-btn.active { border-color: var(--accent); color: var(--accent); }
+
+        /* ─── Tabs ─── */
+        .tabs {
+            display: flex;
+            background: rgba(0,0,0,0.2);
+            border-bottom: 1px solid var(--border);
+        }
+        .tab {
+            flex: 1;
+            padding: 12px;
+            font-size: 0.65rem;
+            text-align: center;
+            cursor: pointer;
+            opacity: 0.4;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: 700;
+            border-bottom: 2px solid transparent;
+        }
+        .tab.active {
+            opacity: 1;
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+            background: rgba(74, 222, 128, 0.05);
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        #json-editor {
+            flex: 1;
+            width: 100%;
+            background: #08080a;
+            color: var(--accent);
+            border: none;
+            padding: 24px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            line-height: 1.6;
+            resize: none;
+            outline: none;
+        }
+
+        .tree-panel {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px;
+        }
+
+        /* ─── Properties Panel ─── */
+        .props-panel {
+            height: 50%;
+            border-top: 1px solid var(--border);
+            background: var(--panel);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .props-header-main {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .state-selector {
+            display: flex;
+            gap: 4px;
+        }
+        .state-btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid transparent;
+            color: var(--text-dim);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.6rem;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+        .state-btn.active { border-color: var(--accent); color: var(--accent); }
+
+        .props-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+        }
+
+        /* ─── Prop Rows ─── */
+        .prop-group { margin-bottom: 20px; }
+        .prop-group-title {
+            font-size: 0.6rem;
+            font-weight: 800;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .prop-group-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+        .prop-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+        .prop-key {
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            width: 130px;
+            flex-shrink: 0;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .prop-input-wrap {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .input-base {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            color: var(--text);
+            padding: 6px 10px;
+            font-size: 0.75rem;
+            width: 100%;
+            outline: none;
+        }
+        .input-base:focus { border-color: var(--accent); }
+
+        /* ─── Tree Nodes ─── */
+        .tree-node { margin-left: 12px; position: relative; }
+        .tree-node::before {
+            content: '';
+            position: absolute;
+            left: -8px; top: 0; bottom: 0;
+            width: 1px; background: var(--border);
+        }
+        .tree-label {
+            display: flex;
+            align-items: center;
+            padding: 6px 8px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+            gap: 8px;
+        }
+        .tree-label:hover { background: rgba(255,255,255,0.03); }
+        .tree-label.selected { background: rgba(74, 222, 128, 0.1); color: var(--accent); }
+        .tree-icon { font-size: 0.6rem; opacity: 0.3; width: 14px; text-align: center; }
+
+        /* ─── Preview ─── */
+        .preview-area {
+            flex: 1;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            overflow: auto;
+        }
+        .preview-container {
+            background: #fff;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            position: relative;
+        }
+        .preview-container iframe { width: 100%; height: 100%; border: none; display: block; }
+
+        /* ─── Catalog ─── */
+        .catalog-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(4px);
+            z-index: 100;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        .catalog-modal {
+            width: 600px;
+            max-height: 80vh;
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .catalog-search {
+            padding: 20px;
+            background: rgba(0,0,0,0.2);
+            border-bottom: 1px solid var(--border);
+        }
+        .catalog-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        .catalog-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 6px;
+        }
+        .catalog-item:hover { background: rgba(255,255,255,0.05); }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h1>V5 NATIVE <span>PRO</span></h1>
+            <button class="btn-primary" id="btnSave">Exportar JSON</button>
+        </div>
+
+        <div class="viewport-controls">
+            <button class="vp-btn" data-width="375" data-height="667">Móvil</button>
+            <button class="vp-btn" data-width="768" data-height="1024">Tablet</button>
+            <button class="vp-btn active" data-width="100" data-height="100" data-full="true">Desktop</button>
+        </div>
+
+        <div class="tabs">
+            <div class="tab active" data-tab="visual">Estructura</div>
+            <div class="tab" data-tab="json">Código</div>
+            <div class="tab" data-tab="tokens">Tokens</div>
+        </div>
+
+        <div class="main-content">
+            <div id="visual-tab" class="tree-panel">
+                <div id="tree"></div>
+            </div>
+            <textarea id="json-editor" style="display:none" spellcheck="false"></textarea>
+            <div id="tokens-tab" class="tree-panel" style="display:none">
+                <div id="tokens-tree"></div>
+            </div>
+        </div>
+
+        <div class="props-panel" id="props-panel">
+            <div class="props-header-main">
+                <div class="props-title" id="selected-name">Selecciona un elemento</div>
+                <div class="state-selector" id="state-selector" style="display:none">
+                    <button class="state-btn active" data-state="base">Base</button>
+                    <button class="state-btn" data-state="hover">Hover</button>
+                    <button class="state-btn" data-state="active">Active</button>
+                    <button class="state-btn" data-state="responsive">Resp</button>
+                </div>
+            </div>
+            <div id="responsive-bp-selector" style="display:none; padding: 8px 16px; border-bottom: 1px solid var(--border); background: rgba(74, 222, 128, 0.05); gap: 8px; align-items: center;">
+                <span style="font-size: 0.6rem; color: var(--text-dim); text-transform: uppercase;">Breakpoint:</span>
+                <select id="bp-select" class="input-base" style="padding: 2px 6px; width: auto; font-size: 0.65rem;">
+                    <option value="0">0px (Mobile)</option>
+                    <option value="768">768px (Tablet)</option>
+                    <option value="1024">1024px (Desktop)</option>
+                </select>
+            </div>
+            <div class="props-content" id="props-content">
+                <div style="opacity:0.3; font-style:italic; font-size:0.8rem">Ningún elemento seleccionado</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="preview-area">
+        <div class="preview-container" id="preview-container" style="width:100%; height:100%">
+            <iframe id="preview" src="index.html"></iframe>
+        </div>
+    </div>
+
+    <div class="catalog-overlay" id="catalog-overlay">
+        <div class="catalog-modal">
+            <div class="catalog-search">
+                <input type="text" class="input-base" id="catalog-search-input" placeholder="Buscar propiedad nativa (ej: backdrop-filter, grid-template-columns)...">
+            </div>
+            <div class="catalog-list" id="catalog-list"></div>
+        </div>
+    </div>
+
+    <script>
+        let contentData = null;
+        let selectedPath = null;
+        let currentEditingState = 'base';
+        let currentBreakpoint = '0';
+
+        const RESERVED = { nombre: 1, hover: 1, active: 1, responsive: 1, variables: 1, texto: 1, tagName: 1, animations: 1 };
+
+        // Professional Native CSS Property Groups
+        const NATIVE_GROUPS = {
+            'Identidad': ['nombre', 'tagName', 'texto'],
+            'Layout (Flex/Grid)': ['display', 'flex-direction', 'justify-content', 'align-items', 'flex-wrap', 'gap', 'grid-template-columns', 'grid-template-rows', 'align-self', 'justify-self', 'flex-grow', 'flex-shrink'],
+            'Dimensiones': ['width', 'height', 'min-width', 'max-width', 'min-height', 'max-height', 'padding', 'margin', 'box-sizing'],
+            'Tipografía': ['font-family', 'font-size', 'font-weight', 'line-height', 'color', 'text-align', 'letter-spacing', 'text-transform', 'text-decoration'],
+            'Efectos': ['background', 'border', 'border-radius', 'box-shadow', 'opacity', 'transition', 'transform', 'filter', 'backdrop-filter', 'overflow', 'z-index', 'cursor']
+        };
+
+        async function init() {
+            const res = await fetch('content.json');
+            contentData = await res.json();
+            renderTree();
+            renderTokens();
+            updateJsonEditor();
+            sendToPreview();
+        }
+
+        function sendToPreview() {
+            const iframe = document.getElementById('preview');
+            iframe.contentWindow.postMessage({ type: 'update-content', content: contentData }, '*');
+        }
+
+        function updateJsonEditor() {
+            document.getElementById('json-editor').value = JSON.stringify(contentData, null, 4);
+        }
+
+        function renderTree() {
+            const tree = document.getElementById('tree');
+            tree.innerHTML = '';
+            tree.appendChild(buildNode(contentData, '', 'pagina'));
+        }
+
+        function buildNode(obj, path, key) {
+            const container = document.createElement('div');
+            container.className = 'tree-node';
+            const label = document.createElement('div');
+            label.className = 'tree-label' + (path === selectedPath ? ' selected' : '');
+
+            // Nodes can have a "nombre" property for better display, or use the key
+            const displayName = obj.nombre || key;
+
+            const children = [];
+            for (const k in obj) {
+                if (typeof obj[k] === 'object' && obj[k] !== null && !RESERVED[k]) {
+                    children.push(k);
+                }
+            }
+
+            label.innerHTML = `
+                <span class="tree-icon">${children.length ? '▼' : '○'}</span>
+                <span style="font-weight:600">${displayName}</span>
+            `;
+
+            label.onclick = (e) => {
+                e.stopPropagation();
+                selectedPath = path;
+                renderTree();
+                renderProperties(obj, path);
+            };
+
+            container.appendChild(label);
+            children.forEach(k => {
+                const childPath = path === '' ? k : `${path}.${k}`;
+                container.appendChild(buildNode(obj[k], childPath, k));
+            });
+            return container;
+        }
+
+        function renderProperties(obj, path) {
+            const container = document.getElementById('props-content');
+            const stateSelector = document.getElementById('state-selector');
+            const bpSelector = document.getElementById('responsive-bp-selector');
+            const nameLabel = document.getElementById('selected-name');
+            container.innerHTML = '';
+            stateSelector.style.display = 'flex';
+            bpSelector.style.display = currentEditingState === 'responsive' ? 'flex' : 'none';
+            nameLabel.textContent = obj.nombre || path.split('.').pop();
+
+            let target;
+            if (currentEditingState === 'base') {
+                target = obj;
+            } else if (currentEditingState === 'responsive') {
+                if (!obj.responsive) obj.responsive = {};
+                if (!obj.responsive[currentBreakpoint]) obj.responsive[currentBreakpoint] = {};
+                target = obj.responsive[currentBreakpoint];
+            } else {
+                target = obj[currentEditingState] || {};
+            }
+
+            for (const groupName in NATIVE_GROUPS) {
+                const groupDiv = document.createElement('div');
+                groupDiv.className = 'prop-group';
+                groupDiv.innerHTML = `<div class="prop-group-title">${groupName}</div>`;
+                let hasProps = false;
+
+                NATIVE_GROUPS[groupName].forEach(key => {
+                    const val = target[key] || (currentEditingState === 'base' ? obj[key] : '');
+                    if (val !== undefined || groupName === 'Identidad') {
+                        hasProps = true;
+                        const row = document.createElement('div');
+                        row.className = 'prop-row';
+                        row.innerHTML = `
+                            <div class="prop-key">${key}</div>
+                            <div class="prop-input-wrap">
+                                <input class="input-base" value="${val || ''}" data-key="${key}">
+                                ${key !== 'nombre' && key !== 'tagName' ? '<span class="delete-prop" style="cursor:pointer; opacity:0.3">✕</span>' : ''}
+                            </div>
+                        `;
+                        const input = row.querySelector('input');
+                        input.oninput = () => {
+                            if (currentEditingState !== 'base' && !obj[currentEditingState]) obj[currentEditingState] = {};
+                            const editTarget = currentEditingState === 'base' ? obj : obj[currentEditingState];
+                            editTarget[key] = input.value;
+                            sendToPreview();
+                        };
+                        const del = row.querySelector('.delete-prop');
+                        if (del) del.onclick = () => { delete target[key]; renderProperties(obj, path); sendToPreview(); };
+                        groupDiv.appendChild(row);
+                    }
+                });
+                if (hasProps) container.appendChild(groupDiv);
+            }
+
+            // Button to add any native property
+            const addPropBtn = document.createElement('button');
+            addPropBtn.className = 'btn-primary';
+            addPropBtn.style.width = '100%';
+            addPropBtn.textContent = '+ Agregar Propiedad Nativa';
+            addPropBtn.onclick = () => {
+                const prop = prompt('Nombre de la propiedad CSS (ej: background-image, border-inline):');
+                if (prop) {
+                    const editTarget = currentEditingState === 'base' ? obj : (obj[currentEditingState] || (obj[currentEditingState] = {}));
+                    editTarget[prop] = '';
+                    renderProperties(obj, path);
+                }
+            };
+            container.appendChild(addPropBtn);
+
+            const addNodeBtn = document.createElement('button');
+            addNodeBtn.className = 'btn-primary';
+            addNodeBtn.style.width = '100%';
+            addNodeBtn.style.marginTop = '10px';
+            addNodeBtn.style.background = 'transparent';
+            addNodeBtn.style.border = '1px solid var(--accent)';
+            addNodeBtn.style.color = 'var(--accent)';
+            addNodeBtn.textContent = '+ Nuevo Hijo (DOM)';
+            addNodeBtn.onclick = () => {
+                const name = prompt('Nombre de la clave JSON:');
+                if (name) { obj[name] = { nombre: name }; renderTree(); }
+            };
+            container.appendChild(addNodeBtn);
+        }
+
+        function renderTokens() {
+            const container = document.getElementById('tokens-tree');
+            container.innerHTML = '';
+            const vars = contentData.variables || {};
+            for (const cat in vars) {
+                const group = document.createElement('div');
+                group.className = 'prop-group';
+                group.innerHTML = `<div class="prop-group-title">${cat}</div>`;
+                for (const key in vars[cat]) {
+                    const row = document.createElement('div');
+                    row.className = 'prop-row';
+                    row.innerHTML = `<div class="prop-key">${key}</div><input class="input-base" value="${vars[cat][key]}">`;
+                    row.querySelector('input').oninput = (e) => { vars[cat][key] = e.target.value; sendToPreview(); };
+                    group.appendChild(row);
+                }
+                container.appendChild(group);
+            }
+        }
+
+        // Event Handlers
+        document.querySelectorAll('.tab').forEach(t => {
+            t.onclick = () => {
+                document.querySelectorAll('.tab, .main-content > div, #json-editor').forEach(el => {
+                    if (el.tagName === 'DIV' || el.tagName === 'TEXTAREA') el.style.display = 'none';
+                    else el.classList.remove('active');
+                });
+                t.classList.add('active');
+                document.getElementById(`${t.dataset.tab}-tab`)?.style.setProperty('display', 'flex');
+                if (t.dataset.tab === 'json') {
+                    const editor = document.getElementById('json-editor');
+                    editor.style.display = 'block';
+                    updateJsonEditor();
+                }
+                if (t.dataset.tab === 'visual') document.getElementById('visual-tab').style.display = 'flex';
+            };
+        });
+
+        document.querySelectorAll('.vp-btn').forEach(btn => {
+            btn.onclick = () => {
+                document.querySelectorAll('.vp-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const container = document.getElementById('preview-container');
+                if (btn.dataset.full) { container.style.width = '100%'; container.style.height = '100%'; }
+                else { container.style.width = btn.dataset.width + 'px'; container.style.height = btn.dataset.height + 'px'; }
+            };
+        });
+
+        document.querySelectorAll('.state-btn').forEach(btn => {
+            btn.onclick = () => {
+                document.querySelectorAll('.state-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentEditingState = btn.dataset.state;
+                const obj = getObjPath(contentData, selectedPath);
+                if (obj) renderProperties(obj, selectedPath);
+            };
+        });
+
+        document.getElementById('bp-select').onchange = (e) => {
+            currentBreakpoint = e.target.value;
+            const obj = getObjPath(contentData, selectedPath);
+            if (obj) renderProperties(obj, selectedPath);
+        };
+
+        function getObjPath(obj, path) {
+            if (!path) return obj;
+            return path.split('.').reduce((o, i) => o[i], obj);
+        }
+
+        document.getElementById('json-editor').oninput = (e) => {
+            try {
+                contentData = JSON.parse(e.target.value);
+                sendToPreview();
+                renderTree();
+                renderTokens();
+            } catch(err) {}
+        };
+
+        document.getElementById('btnSave').onclick = () => {
+            const blob = new Blob([JSON.stringify(contentData, null, 4)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'content.json';
+            a.click();
+        };
+
+        init();
+    </script>
+</body>
+</html>

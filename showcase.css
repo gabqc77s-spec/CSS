@@ -1,0 +1,6 @@
+/* V4 — Reset only. No visual values. */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
