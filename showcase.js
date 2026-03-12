@@ -1,7 +1,6 @@
 /**
- * SINGULARITY V8 ENGINE - THE LOGIC ORCHESTRATOR
- * The pinnacle of JSON-driven architecture.
- * Logic, State, and Actions within the Data Model.
+ * OMNIVERSE V9 ENGINE - THE INFINITE TRANSCRIPTOR
+ * Total JSON-to-DOM Orchestration.
  */
 
 let currentContent = null;
@@ -9,103 +8,129 @@ let hoveredNodeId = null;
 let activeNodeId = null;
 let startTime = Date.now();
 let externalData = {};
+let actionLog = [];
+let mouseX = 0, mouseY = 0;
 
-// DESIGN SEEDS
-const SEEDS = {
-    "glass": {
-        "backdrop-filter": "blur(20px) saturate(180%)",
-        "background-color": "rgba(255, 255, 255, 0.05)",
-        "border": "1px solid rgba(255, 255, 255, 0.1)",
-        "box-shadow": "0 8px 32px 0 rgba(0, 0, 0, 0.37)"
-    },
-    "cyber": {
-        "background": "linear-gradient(45deg, #ff003c 0%, #00f0ff 100%)",
-        "clip-path": "polygon(0% 0%, 100% 0%, 100% 75%, 75% 100%, 0% 100%)",
-        "filter": "drop-shadow(0 0 10px #ff003c)"
-    }
+window.onmousemove = (e) => {
+    mouseX = e.clientX / window.innerWidth;
+    mouseY = e.clientY / window.innerHeight;
 };
 
 /**
- * RESOLUTION ENGINE V8
+ * RESOLUTION ENGINE V9
+ * Recursive deep-resolver for Variables, Props, External Data, and Math.
  */
 function resolveValue(val, context = {}) {
     if (typeof val !== 'string') return val;
 
-    // 1. Fluid Math: math(50 + 20)
-    val = val.replace(/math\((.*?)\)/g, (_, expr) => {
-        try {
-            // Replace css variables with their values
-            const cleanExpr = expr.replace(/--([\w-]+)/g, (m) => {
-                return getComputedStyle(document.documentElement).getPropertyValue(m).trim() || "0";
-            });
-            return eval(cleanExpr);
-        } catch(e) { return expr; }
-    });
+    // Deep resolution loop (up to 5 iterations for complex dependencies)
+    let lastVal;
+    let iterations = 0;
+    do {
+        lastVal = val;
 
-    // 2. Props: {{prop}}
-    val = val.replace(/\{\{(.*?)\}\}/g, (_, path) => {
-        const parts = path.trim().split('.');
-        let curr = context.props || {};
-        for (const p of parts) { if (curr && curr[p] !== undefined) curr = curr[p]; else return `{{${path}}}`; }
-        return curr;
-    });
-
-    // 3. External Data: [[path]]
-    val = val.replace(/\[\[(.*?)\]\]/g, (_, fullPath) => {
-        for (const fetchPath in externalData) {
-            if (fullPath.startsWith(fetchPath)) {
-                let curr = externalData[fetchPath];
-                const remaining = fullPath.slice(fetchPath.length).replace(/^\./, '');
-                if (!remaining) return curr;
-                for (const p of remaining.split('.')) {
-                    if (curr && curr[p] !== undefined) curr = curr[p];
-                    else { curr = null; break; }
-                }
-                if (curr !== null) return typeof curr === 'object' ? JSON.stringify(curr) : curr;
+        // 1. Props: {{prop}}
+        val = val.replace(/\{\{(.*?)\}\}/g, (_, path) => {
+            const parts = path.trim().split('.');
+            let curr = context.props || {};
+            for (const p of parts) {
+                if (curr && curr[p] !== undefined) curr = curr[p];
+                else return `{{${path}}}`;
             }
-        }
-        return `[[${fullPath}]]`;
-    });
+            return typeof curr === 'object' ? JSON.stringify(curr) : String(curr);
+        });
 
-    // 4. Variables: $path
-    if (val.includes('$')) {
-        return val.replace(/\$([\w\.]+)/g, (match, path) => {
+        // 2. Variables: $path
+        val = val.replace(/\$([\w\.]+)/g, (match, path) => {
             const parts = path.split('.');
             let curr = currentContent || {};
             for (const p of parts) {
                 if (curr && curr[p] !== undefined) curr = curr[p];
                 else return match;
             }
-            return curr;
+            return typeof curr === 'object' ? JSON.stringify(curr) : String(curr);
         });
-    }
+
+        // 3. External Data: [[path]]
+        val = val.replace(/\[\[(.*?)\]\]/g, (_, fullPath) => {
+            for (const fetchPath in externalData) {
+                if (fullPath.startsWith(fetchPath)) {
+                    let curr = externalData[fetchPath];
+                    const remaining = fullPath.slice(fetchPath.length).replace(/^\./, '');
+                    if (!remaining) return typeof curr === 'object' ? JSON.stringify(curr) : String(curr);
+                    for (const p of remaining.split('.')) {
+                        if (curr && curr[p] !== undefined) curr = curr[p];
+                        else { curr = null; break; }
+                    }
+                    if (curr !== null) return typeof curr === 'object' ? JSON.stringify(curr) : String(curr);
+                }
+            }
+            return `[[${fullPath}]]`;
+        });
+
+        // 4. Fluid Math: math(expr)
+        val = val.replace(/math\((.*?)\)/g, (_, expr) => {
+            try {
+                const mathContext = {
+                    ...Math,
+                    time: (Date.now() - startTime) / 1000,
+                    scroll: window.scrollY,
+                    mx: mouseX,
+                    my: mouseY,
+                    clamp: (min, val, max) => Math.max(min, Math.min(val, max)),
+                    lerp: (a, b, t) => a + (b - a) * t,
+                    noise: (x) => Math.sin(x) * Math.cos(x * 1.5)
+                };
+
+                // Inject math context into evaluation
+                const keys = Object.keys(mathContext);
+                const func = new Function(...keys, `return ${expr}`);
+                return func(...Object.values(mathContext));
+            } catch(e) { return expr; }
+        });
+
+        iterations++;
+    } while (val !== lastVal && iterations < 5);
 
     return val;
 }
 
 /**
- * ACTION DISPATCHER
- * Executes logic defined in JSON
+ * ACTION DISPATCHER V9
+ * Orchestrates JSON-defined logic and lifecycle events.
  */
-function dispatchActions(actions) {
+function dispatchActions(actions, context = {}) {
     if (!actions) return;
+    if (!Array.isArray(actions)) actions = [actions];
+
     actions.forEach(action => {
+        actionLog.push({ time: Date.now(), ...action });
+        if (actionLog.length > 50) actionLog.shift();
+
         if (action.type === 'set') {
             const path = action.path.split('.');
             let curr = currentContent;
-            for (let i = 0; i < path.length - 1; i++) curr = curr[path[i]];
+            for (let i = 0; i < path.length - 1; i++) {
+                if (!curr[path[i]]) curr[path[i]] = {};
+                curr = curr[path[i]];
+            }
 
             let val = action.value;
-            if (typeof val === 'string' && val.includes('math(')) {
-                // For actions, we resolve variables against the current state before evaluating math
-                const resolvedVal = val.replace(/\$([\w\.]+)/g, (_, p) => {
-                    let c = currentContent;
-                    for(const part of p.split('.')) c = c[part];
-                    return c;
-                });
-                val = resolveValue(resolvedVal);
-            }
-            curr[path[path.length - 1]] = val;
+            // Resolve value in context of current state
+            curr[path[path.length - 1]] = resolveValue(val, context);
+        }
+
+        if (action.type === 'fetch') {
+            fetch(action.url).then(r => r.json()).then(data => {
+                externalData[action.path || action.url] = data;
+            });
+        }
+
+        if (action.type === 'toggle') {
+            const path = action.path.split('.');
+            let curr = currentContent;
+            for (let i = 0; i < path.length - 1; i++) curr = curr[path[i]];
+            curr[path[path.length - 1]] = !curr[path[path.length - 1]];
         }
     });
 }
@@ -157,9 +182,12 @@ function transcribir(data, container, path = 'pagina', context = {}) {
     // 2. DOM Lifecycle
     if (!el) {
         let tagName = effectiveData.tagName || 'div';
+        // Generic heuristics based on properties if tagName is missing
         if (!effectiveData.tagName) {
-            if (path.includes('boton')) tagName = 'button';
-            else if (path.includes('img')) tagName = 'img';
+            if (effectiveData.href) tagName = 'a';
+            else if (effectiveData['background-image'] && !effectiveData.texto) tagName = 'div';
+            else if (effectiveData.src || path.includes('img')) tagName = 'img';
+            else if (effectiveData.texto && (path.includes('boton') || effectiveData.cursor === 'pointer')) tagName = 'button';
         }
         el = document.createElement(tagName);
         el.id = elementId;
@@ -167,7 +195,9 @@ function transcribir(data, container, path = 'pagina', context = {}) {
     }
 
     // 3. Expansion
-    if (effectiveData._seed && SEEDS[effectiveData._seed]) Object.assign(effectiveData, SEEDS[effectiveData._seed]);
+    if (effectiveData._seed && currentContent._seeds && currentContent._seeds[effectiveData._seed]) {
+        Object.assign(effectiveData, currentContent._seeds[effectiveData._seed]);
+    }
 
     const estilos = {};
     const hijos = {};
@@ -207,16 +237,19 @@ function transcribir(data, container, path = 'pagina', context = {}) {
     el.onmouseenter = (e) => {
         e.stopPropagation();
         hoveredNodeId = el.id;
-        if (effectiveData.hover) {
-            // Re-render handled by mainLoop since state changed
-        }
+        if (effectiveData.onMouseEnter) dispatchActions(effectiveData.onMouseEnter, localContext);
     };
-    el.onmouseleave = () => { if (hoveredNodeId === el.id) hoveredNodeId = null; };
+    el.onmouseleave = (e) => {
+        if (hoveredNodeId === el.id) hoveredNodeId = null;
+        if (effectiveData.onMouseLeave) dispatchActions(effectiveData.onMouseLeave, localContext);
+    };
+    el.onmousemove = (e) => {
+        if (effectiveData.onMouseMove) dispatchActions(effectiveData.onMouseMove, { ...localContext, event: e });
+    };
     el.onclick = (e) => {
-        if (effectiveData._actions) {
-            e.stopPropagation();
-            dispatchActions(effectiveData._actions);
-        }
+        e.stopPropagation();
+        if (effectiveData._actions) dispatchActions(effectiveData._actions, localContext);
+        if (effectiveData.onClick) dispatchActions(effectiveData.onClick, localContext);
     };
     el.onmousedown = () => { activeNodeId = el.id; };
     el.onmouseup = () => { activeNodeId = null; };
@@ -242,7 +275,14 @@ function transcribir(data, container, path = 'pagina', context = {}) {
         } else if (tNode) el.removeChild(tNode);
     }
 
-    // 8. Dynamic Fetch
+    // 8. Lifecycle Events
+    if (!el._mounted) {
+        el._mounted = true;
+        if (effectiveData.onMount) dispatchActions(effectiveData.onMount, localContext);
+    }
+    if (effectiveData.onUpdate) dispatchActions(effectiveData.onUpdate, localContext);
+
+    // Dynamic Fetch (Legacy support)
     if (effectiveData._fetch && !externalData[path]) {
         externalData[path] = { loading: true };
         fetch(effectiveData._fetch).then(r => r.json()).then(d => { externalData[path] = d; });
@@ -275,6 +315,7 @@ function mainLoop() {
                 type: 'sync-data',
                 data: {
                     external: externalData,
+                    actionLog: actionLog,
                     state: { ...currentContent, time: time, scroll: window.scrollY }
                 }
             }, '*');

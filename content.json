@@ -1,263 +1,178 @@
 {
-    "nombre": "THE SINGULARITY V8 - EFICELL",
-    "width": "100%",
-    "min-height": "100vh",
+    "nombre": "OMNIVERSE V10 - THE ARCHITECT'S MASTERPIECE",
     "background": "$variables.theme.bg",
     "color": "$variables.theme.text",
     "font-family": "'Inter', system-ui, sans-serif",
-    "transition": "background 0.5s ease",
+    "min-height": "100vh",
+    "overflow": "hidden",
+    "perspective": "1000px",
+    "_seeds": {
+        "glass-panel": {
+            "backdrop-filter": "blur(40px) saturate(150%)",
+            "background": "rgba(255, 255, 255, 0.02)",
+            "border": "1px solid rgba(255, 255, 255, 0.08)",
+            "border-radius": "32px",
+            "box-shadow": "0 20px 80px rgba(0,0,0,0.8)"
+        },
+        "neon-glow": {
+            "color": "$variables.theme.accent",
+            "text-shadow": "0 0 10px $variables.theme.accent_glow, 0 0 30px $variables.theme.accent_glow"
+        }
+    },
     "variables": {
-        "theme": { "bg": "#1e1e2e", "text": "#f0f0f0", "accent": "#f59e0b" },
-        "stats": { "clicks": 0 }
+        "theme": {
+            "bg": "#010103",
+            "text": "#ffffff",
+            "accent": "#00f0ff",
+            "accent_glow": "rgba(0, 240, 255, 0.5)"
+        },
+        "state": {
+            "active_module": "SYMPHONY",
+            "intensity": 1.0
+        }
     },
     "templates": {
-        "NavLink": {
-            "nombre": "enlace",
-            "texto": "{{label}}",
-            "color": "rgba(240, 240, 240, 0.7)",
-            "font-size": "0.9rem",
-            "cursor": "pointer",
-            "transition": "color 0.2s ease",
-            "hover": {
-                "color": "$variables.theme.accent"
-            }
-        },
-        "ServiceCard": {
-            "background": "rgba(255, 255, 255, 0.06)",
-            "border": "1px solid rgba(255, 255, 255, 0.08)",
-            "border-radius": "16px",
-            "padding": "3rem 2rem 2rem",
-            "min-width": "280px",
-            "min-height": "280px",
-            "flex": "1",
-            "display": "flex",
-            "flex-direction": "column",
-            "gap": "1rem",
-            "transition": "all 0.3s ease",
-            "hover": {
-                "transform": "translateY(-4px)",
-                "background": "rgba(255, 255, 255, 0.09)",
-                "border-color": "$variables.theme.accent"
-            },
-            "icono": {
-                "texto": "{{icon}}",
-                "font-size": "2rem"
-            },
-            "titulo": {
-                "texto": "{{title}}",
-                "color": "#f0f0f0",
-                "font-size": "1.1rem",
-                "font-weight": "600"
-            },
-            "descripcion": {
-                "texto": "{{desc}}",
-                "color": "rgba(240, 240, 240, 0.5)",
-                "font-size": "0.88rem",
-                "line-height": "1.6"
-            }
-        }
-    },
-    "navbar": {
-        "nombre": "barra de navegacion",
-        "width": "100%",
-        "height": "70px",
-        "background": "rgba(30, 30, 46, 0.8)",
-        "position": "fixed",
-        "top": "0",
-        "left": "0",
-        "display": "flex",
-        "align-items": "center",
-        "justify-content": "space-between",
-        "padding": "0 2rem 0 10rem",
-        "backdrop-filter": "blur(20px)",
-        "z-index": "1000",
-        "logo": {
-            "nombre": "logo",
-            "width": "160px",
-            "height": "160px",
+        "NeuralCore": {
             "position": "absolute",
-            "top": "17px",
-            "left": "28px",
-            "background-image": "url('https://gabqc77s-spec.github.io/eficell/uploads/chromaclear-result%20(10).png')",
-            "background-size": "contain",
-            "background-repeat": "no-repeat",
-            "background-position": "center"
+            "width": "{{size}}",
+            "height": "{{size}}",
+            "border-radius": "50%",
+            "background": "{{color}}",
+            "filter": "blur(math({{size}} / 2)px)",
+            "opacity": "math(0.2 * $variables.state.intensity)",
+            "left": "math(50 + cos(time * {{speed}} + {{offset}}) * 35)%",
+            "top": "math(50 + sin(time * {{speed}} * 0.8 + {{offset}}) * 35)%",
+            "transform": "scale(math(1 + sin(time) * 0.2))"
         },
-        "nav-links": {
-            "nombre": "enlaces",
-            "display": "flex",
-            "gap": "2rem",
-            "align-items": "center",
-            "link-inicio": { "_template": "NavLink", "props": { "label": "Inicio" } },
-            "link-servicios": { "_template": "NavLink", "props": { "label": "Servicios" } },
-            "link-nosotros": { "_template": "NavLink", "props": { "label": "Nosotros" } },
-            "link-contacto": { "_template": "NavLink", "props": { "label": "Contacto" } }
-        },
-        "boton-cta": {
-            "nombre": "boton cotizar",
-            "texto": "Cotizar Ahora",
-            "background": "$variables.theme.accent",
-            "color": "#ffffff",
-            "padding": "10px 24px",
-            "border-radius": "24px",
-            "font-size": "0.88rem",
-            "font-weight": "600",
+        "StudioTab": {
+            "padding": "12px 20px",
+            "border-radius": "100px",
+            "border": "1px solid math($variables.state.active_module === '{{label}}' ? '$variables.theme.accent' : 'rgba(255,255,255,0.05)')",
+            "background": "math($variables.state.active_module === '{{label}}' ? 'rgba(0, 240, 255, 0.1)' : 'transparent')",
+            "color": "math($variables.state.active_module === '{{label}}' ? '$variables.theme.accent' : '#555')",
             "cursor": "pointer",
-            "transition": "all 0.2s ease",
+            "transition": "all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1)",
+            "texto": "{{label}}",
+            "font-size": "0.6rem",
+            "font-weight": "800",
+            "letter-spacing": "2px",
+            "onClick": [
+                { "type": "set", "path": "variables.state.active_module", "value": "{{label}}" }
+            ],
             "hover": {
-                "transform": "scale(1.05)",
-                "background": "#d97706",
-                "box-shadow": "0 4px 15px rgba(217, 119, 6, 0.4)"
+                "border-color": "$variables.theme.accent",
+                "color": "#fff"
             }
         }
     },
-    "hero": {
-        "nombre": "seccion hero",
-        "width": "100%",
-        "min-height": "100vh",
+    "background_orchestrator": {
+        "position": "fixed",
+        "inset": "0",
+        "z-index": "-1",
+        "core_1": { "_template": "NeuralCore", "props": { "size": "600px", "color": "#0a1a3a", "speed": "0.4", "offset": "0" } },
+        "core_2": { "_template": "NeuralCore", "props": { "size": "400px", "color": "#1a0a3a", "speed": "0.6", "offset": "3" } },
+        "grid": {
+            "position": "absolute",
+            "inset": "0",
+            "background-image": "radial-gradient(rgba(0,240,255,0.05) 1px, transparent 1px)",
+            "background-size": "40px 40px",
+            "opacity": "0.3"
+        }
+    },
+    "workspace": {
         "display": "flex",
         "flex-direction": "column",
         "align-items": "center",
         "justify-content": "center",
-        "text-align": "center",
-        "padding": "120px 2rem 4rem",
-        "background": "radial-gradient(ellipse at 70% 20%, rgba(217, 119, 6, 0.06) 0%, transparent 50%), radial-gradient(ellipse at 30% 80%, rgba(45, 138, 78, 0.04) 0%, transparent 50%)",
-        "badge": {
-            "nombre": "badge disponible",
-            "texto": "● Disponible ahora",
-            "color": "rgba(240, 240, 240, 0.7)",
-            "font-size": "0.85rem",
-            "padding": "6px 16px",
-            "border-radius": "20px",
-            "border": "1px solid rgba(255, 255, 255, 0.1)",
-            "margin-bottom": "2rem"
-        },
-        "titulo-contenedor": {
-            "nombre": "titulo completo",
+        "min-height": "100vh",
+        "padding": "60px",
+        "gap": "60px",
+        "navigation": {
             "display": "flex",
-            "flex-wrap": "wrap",
-            "justify-content": "center",
-            "gap": "0 0.35em",
-            "margin-bottom": "1.5rem",
-            "max-width": "800px",
-            "titulo-1": {
-                "texto": "Energía Sostenible Para",
-                "font-size": "clamp(2.5rem, 6vw, 4.5rem)",
-                "font-weight": "800",
-                "color": "#f0f0f0",
-                "line-height": "1.15"
-            },
-            "titulo-2": {
-                "texto": "Tu Futuro",
-                "font-size": "clamp(2.5rem, 6vw, 4.5rem)",
-                "font-weight": "800",
-                "font-style": "italic",
-                "color": "$variables.theme.accent",
-                "line-height": "1.15"
-            }
+            "gap": "12px",
+            "padding": "8px",
+            "border-radius": "100px",
+            "background": "rgba(255,255,255,0.02)",
+            "border": "1px solid rgba(255,255,255,0.05)",
+            "item_1": { "_template": "StudioTab", "props": { "label": "SYMPHONY" } },
+            "item_2": { "_template": "StudioTab", "props": { "label": "NEURAL" } },
+            "item_3": { "_template": "StudioTab", "props": { "label": "KINETIC" } }
         },
-        "subtitulo": {
-            "texto": "Soluciones integrales en energía solar, eficiencia energética e hidrógeno verde. Acompañamos a empresas, instituciones y comunidades desde la evaluación inicial hasta la implementación de sistemas sustentables.",
-            "color": "rgba(240, 240, 240, 0.5)",
-            "font-size": "1rem",
-            "line-height": "1.7",
-            "max-width": "650px",
-            "margin-bottom": "2.5rem"
-        },
-        "botones-hero": {
-            "display": "flex",
-            "gap": "1.5rem",
-            "flex-wrap": "wrap",
-            "justify-content": "center",
-            "margin-bottom": "4rem",
-            "boton-evaluacion": {
-                "texto": "Solicitar Evaluación",
-                "background": "$variables.theme.accent",
-                "color": "#ffffff",
-                "padding": "14px 32px",
-                "border-radius": "12px",
-                "font-size": "1rem",
-                "font-weight": "600",
-                "cursor": "pointer",
-                "transition": "all 0.2s ease",
-                "hover": {
-                    "transform": "translateY(-2px)",
-                    "background": "#d97706",
-                    "box-shadow": "0 6px 20px rgba(217, 119, 6, 0.4)"
-                },
-                "_actions": [
-                    { "type": "set", "path": "variables.stats.clicks", "value": "math($variables.stats.clicks + 1)" }
-                ]
-            },
-            "boton-servicios": {
-                "texto": "Conocer Servicios",
-                "background": "transparent",
-                "color": "#f0f0f0",
-                "padding": "14px 32px",
-                "font-size": "1rem",
-                "font-weight": "500",
-                "cursor": "pointer",
-                "transition": "all 0.2s ease",
-                "hover": {
-                    "color": "$variables.theme.accent"
-                }
-            }
-        },
-        "interaction_counter": {
-            "texto": "INTERACCIONES: $variables.stats.clicks",
-            "font-size": "0.7rem",
-            "color": "$variables.theme.accent",
-            "letter-spacing": "2px",
-            "margin-bottom": "2rem"
-        }
-    },
-    "servicios": {
-        "nombre": "seccion servicios",
-        "width": "100%",
-        "padding": "6rem 2rem",
-        "display": "flex",
-        "flex-direction": "column",
-        "align-items": "center",
-        "background": "#1e3a2a",
-        "titulo-servicios": {
-            "texto": "Nuestros Servicios",
-            "font-size": "2rem",
-            "font-weight": "700",
-            "color": "#f0f0f0",
-            "margin-bottom": "3rem",
-            "font-style": "italic"
-        },
-        "grid-servicios": {
-            "display": "flex",
-            "gap": "1.5rem",
-            "max-width": "1200px",
+        "liquid_interface": {
+            "_seed": "glass-panel",
             "width": "100%",
-            "overflow-x": "auto",
-            "padding-bottom": "1rem",
-            "card-1": { "_template": "ServiceCard", "props": { "icon": "⚡", "title": "Sistemas Fotovoltaicos", "desc": "Instalación profesional de sistemas monofásicos y trifásicos adaptados a tu consumo." } },
-            "card-2": { "_template": "ServiceCard", "props": { "icon": "🔧", "title": "Mantenimiento", "desc": "Servicio preventivo y correctivo para mantener tus paneles funcionando al máximo." } },
-            "card-3": { "_template": "ServiceCard", "props": { "icon": "📊", "title": "Auditorías Energéticas", "desc": "Diagnósticos de consumo y evaluación técnica-económica para optimizar recursos." } }
-        }
-    },
-    "footer": {
-        "nombre": "pie de pagina",
-        "width": "100%",
-        "padding": "2rem 3rem",
-        "display": "flex",
-        "justify-content": "space-between",
-        "align-items": "center",
-        "background": "linear-gradient(135deg, #1e3a2a, #2d8a4e)",
-        "footer-brand": {
+            "max-width": "900px",
+            "padding": "60px",
             "display": "flex",
-            "align-items": "center",
-            "gap": "0.5rem",
-            "footer-emoji": { "texto": "🌱", "font-size": "1.2rem" },
-            "footer-nombre": { "texto": "Eficell", "color": "#f0f0f0", "font-size": "1rem", "font-weight": "600" }
-        },
-        "texto-footer": {
-            "texto": "© 2026 Eficell Consultores SpA. Energía sostenible.",
-            "color": "rgba(240, 240, 240, 0.6)",
-            "font-size": "0.82rem"
+            "flex-direction": "column",
+            "gap": "40px",
+            "transform": "rotateX(math(my * 10 - 5)deg) rotateY(math(mx * 10 - 5)deg)",
+            "transition": "transform 0.1s ease-out",
+            "header": {
+                "display": "flex",
+                "justify-content": "space-between",
+                "align-items": "flex-start",
+                "meta": {
+                    "display": "flex",
+                    "flex-direction": "column",
+                    "gap": "8px",
+                    "title": {
+                        "texto": "OMNIVERSE_ARCHIVE",
+                        "font-size": "2.5rem",
+                        "font-weight": "900",
+                        "letter-spacing": "-1px",
+                        "_seed": "neon-glow"
+                    },
+                    "subtitle": {
+                        "texto": "MODULAR_LOGIC_UNIT // 00.9.10",
+                        "font-size": "0.6rem",
+                        "opacity": "0.3",
+                        "letter-spacing": "3px"
+                    }
+                },
+                "status_indicator": {
+                    "width": "12px",
+                    "height": "12px",
+                    "border-radius": "50%",
+                    "background": "#4ade80",
+                    "box-shadow": "0 0 20px #4ade80",
+                    "transform": "scale(math(1 + sin(time * 5) * 0.3))"
+                }
+            },
+            "canvas_area": {
+                "height": "300px",
+                "border": "1px dashed rgba(255,255,255,0.1)",
+                "border-radius": "24px",
+                "background": "rgba(0,0,0,0.2)",
+                "display": "flex",
+                "align-items": "center",
+                "justify-content": "center",
+                "overflow": "hidden",
+                "relative_layer": {
+                    "position": "relative",
+                    "width": "100%",
+                    "height": "100%",
+                    "kinetic_node": {
+                        "width": "80px",
+                        "height": "80px",
+                        "border-radius": "20px",
+                        "background": "linear-gradient(135deg, $variables.theme.accent, #ff00ff)",
+                        "position": "absolute",
+                        "left": "math(mx * 100)%",
+                        "top": "math(my * 100)%",
+                        "transform": "translate(-50%, -50%) rotate(math(time * 50)deg)",
+                        "box-shadow": "0 0 50px rgba(0,240,255,0.3)",
+                        "onMouseEnter": [ { "type": "set", "path": "variables.state.intensity", "value": "2.0" } ],
+                        "onMouseLeave": [ { "type": "set", "path": "variables.state.intensity", "value": "1.0" } ]
+                    }
+                }
+            },
+            "description": {
+                "texto": "Module: $variables.state.active_module. High-precision transcription engine running at 60FPS. All visual parameters are derived from high-frequency math strings resolved in the main execution loop.",
+                "font-size": "0.8rem",
+                "line-height": "1.7",
+                "opacity": "0.5"
+            }
         }
     }
 }
