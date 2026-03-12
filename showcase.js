@@ -82,10 +82,13 @@ function resolveValue(val, context = {}) {
                     noise: (x) => Math.sin(x) * Math.cos(x * 1.5)
                 };
 
-                // Inject math context into evaluation
-                const keys = Object.keys(mathContext);
-                const func = new Function(...keys, `return ${expr}`);
-                return func(...Object.values(mathContext));
+                // Optimized evaluation: cache compiled functions
+                if (!window._mathCache) window._mathCache = {};
+                if (!window._mathCache[expr]) {
+                    const keys = Object.keys(mathContext);
+                    window._mathCache[expr] = new Function(...keys, `return ${expr}`);
+                }
+                return window._mathCache[expr](...Object.values(mathContext));
             } catch(e) { return expr; }
         });
 
@@ -218,20 +221,34 @@ function transcribir(data, container, path = 'pagina', context = {}) {
         }
     }
 
-    // 5. Native CSS Application
-    el.style.cssText = '';
+    // 5. Surgical Native CSS Application
+    // Merge States (Hover/Active)
+    const combinedStyles = { ...estilos };
+    if (hoveredNodeId === el.id && effectiveData.hover) Object.assign(combinedStyles, effectiveData.hover);
+    if (activeNodeId === el.id && effectiveData.active) Object.assign(combinedStyles, effectiveData.active);
 
-    // Apply States (Hover/Active)
-    if (hoveredNodeId === el.id && effectiveData.hover) {
-        Object.assign(estilos, effectiveData.hover);
-    }
-    if (activeNodeId === el.id && effectiveData.active) {
-        Object.assign(estilos, effectiveData.active);
+    // Track active properties to handle removals
+    const newAppliedKeys = new Set();
+
+    for (const key in combinedStyles) {
+        const rawValue = combinedStyles[key];
+        const resolvedValue = resolveValue(rawValue, localContext);
+
+        // Only update if value actually changed
+        if (el.style.getPropertyValue(key) !== String(resolvedValue)) {
+            el.style.setProperty(key, resolvedValue);
+        }
+        newAppliedKeys.add(key);
     }
 
-    for (const key in estilos) {
-        el.style.setProperty(key, resolveValue(estilos[key], localContext));
-    }
+    // Clean up properties that are no longer present
+    const prevKeys = el._prevStyles || new Set();
+    prevKeys.forEach(key => {
+        if (!newAppliedKeys.has(key)) {
+            el.style.removeProperty(key);
+        }
+    });
+    el._prevStyles = newAppliedKeys;
 
     // 6. Interaction & Actions
     el.onmouseenter = (e) => {
@@ -265,14 +282,20 @@ function transcribir(data, container, path = 'pagina', context = {}) {
         }, true);
     }
 
-    // 7. Rendering Content
-    if (el.tagName === 'IMG' && texto) el.src = texto;
-    else {
+    // 7. Surgical Rendering of Content
+    if (el.tagName === 'IMG') {
+        if (el.src !== texto) el.src = texto;
+    } else {
         let tNode = Array.from(el.childNodes).find(n => n.nodeType === Node.TEXT_NODE);
         if (texto) {
-            if (tNode) tNode.textContent = texto;
-            else el.prepend(document.createTextNode(texto));
-        } else if (tNode) el.removeChild(tNode);
+            if (tNode) {
+                if (tNode.textContent !== texto) tNode.textContent = texto;
+            } else {
+                el.prepend(document.createTextNode(texto));
+            }
+        } else if (tNode) {
+            el.removeChild(tNode);
+        }
     }
 
     // 8. Lifecycle Events
@@ -299,29 +322,67 @@ function transcribir(data, container, path = 'pagina', context = {}) {
 /**
  * RUNTIME
  */
-let lastState = '';
+let lastStateHash = '';
 function mainLoop() {
     const time = (Date.now() - startTime) / 1000;
+    const scroll = window.scrollY;
+
     document.documentElement.style.setProperty('--nexus-time', time);
-    document.documentElement.style.setProperty('--nexus-scroll', window.scrollY);
+    document.documentElement.style.setProperty('--nexus-scroll', scroll);
 
     if (currentContent) {
-        const stateStr = JSON.stringify(currentContent) + JSON.stringify(externalData) + hoveredNodeId + activeNodeId;
-        if (stateStr !== lastState) {
+        // Fast path for high-frequency updates (only updates dynamic properties)
+        updateHighFrequencyProps(currentContent, 'pagina');
+
+        // Full transcription only if structure or base values changed
+        // We use a lighter "fingerprint" than full JSON.stringify
+        const stateHash = `${currentContent._v || 0}-${JSON.stringify(externalData).length}-${hoveredNodeId}-${activeNodeId}`;
+
+        if (stateHash !== lastStateHash) {
             updateGlobalStyles(currentContent);
             transcribir(currentContent, document.getElementById('app'), 'pagina');
-            lastState = stateStr;
+            lastStateHash = stateHash;
+
             window.parent.postMessage({
                 type: 'sync-data',
                 data: {
                     external: externalData,
                     actionLog: actionLog,
-                    state: { ...currentContent, time: time, scroll: window.scrollY }
+                    state: { ...currentContent, time: time, scroll: scroll }
                 }
             }, '*');
         }
     }
     requestAnimationFrame(mainLoop);
+}
+
+/**
+ * FAST PATH: HIGH-FREQUENCY PROPERTY UPDATE
+ * Recursively updates only properties containing dynamic math (time, mx, my, scroll).
+ */
+function updateHighFrequencyProps(data, path, context = {}) {
+    if (path === 'templates') return;
+
+    const el = document.getElementById(`node-${path.replace(/\./g, '-')}`);
+    if (!el) return;
+
+    const localContext = { props: data.props || {} };
+
+    // Check styles for dynamic math
+    for (const key in data) {
+        const val = data[key];
+        if (typeof val === 'string' && val.includes('math(')) {
+            const resolved = resolveValue(val, localContext);
+            if (el.style.getPropertyValue(key) !== String(resolved)) {
+                el.style.setProperty(key, resolved);
+            }
+        }
+
+        // Recurse into children
+        if (typeof val === 'object' && val !== null && !['hover', 'active', 'responsive', 'animations', 'props'].includes(key)) {
+            updateHighFrequencyProps(val, `${path}.${key}`, localContext);
+        }
+    }
 }
 
 function updateGlobalStyles(data) {
