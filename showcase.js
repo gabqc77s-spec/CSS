@@ -216,7 +216,7 @@ function transcribir(data, container, path = 'pagina', context = {}) {
         if (key === 'texto') { texto = resolveValue(val, localContext); continue; }
 
         if (typeof val === 'object' && val !== null) {
-            if (['hover', 'active', 'responsive', 'animations'].includes(key)) continue;
+            if (['hover', 'active', 'responsive', 'animations', 'scroll'].includes(key)) continue;
             hijos[key] = val;
         } else {
             estilos[key] = resolveValue(val, localContext);
@@ -228,6 +228,30 @@ function transcribir(data, container, path = 'pagina', context = {}) {
     const combinedStyles = { ...estilos };
     if (hoveredNodeId === el.id && effectiveData.hover) Object.assign(combinedStyles, effectiveData.hover);
     if (activeNodeId === el.id && effectiveData.active) Object.assign(combinedStyles, effectiveData.active);
+
+    // Scroll Behavior Logic (JSON-specific)
+    if (effectiveData.scroll) {
+        if (effectiveData.scroll.direccion === 'horizontal') {
+            combinedStyles['overflow-x'] = 'auto';
+            combinedStyles['display'] = 'flex';
+        } else if (effectiveData.scroll.direccion === 'vertical') {
+            combinedStyles['overflow-y'] = 'auto';
+        }
+    }
+
+    // Responsive Logic
+    if (effectiveData.responsive) {
+        const width = window.innerWidth;
+        const breakpoints = Object.keys(effectiveData.responsive).map(Number).sort((a,b) => a-b);
+        breakpoints.forEach(bp => {
+            if (width >= bp) Object.assign(combinedStyles, effectiveData.responsive[bp]);
+        });
+    }
+
+    // Visibility Logic
+    if (effectiveData.visible === false || (typeof effectiveData.visible === 'string' && resolveValue(effectiveData.visible, localContext) === 'false')) {
+        combinedStyles.display = 'none';
+    }
 
     // Track active properties to handle removals
     const newAppliedKeys = new Set();

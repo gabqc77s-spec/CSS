@@ -1,247 +1,1082 @@
 {
-    "nombre": "OMNIVERSE V10 - THE ARCHITECT'S MASTERPIECE",
-    "background": "$variables.theme.bg",
-    "color": "$variables.theme.text",
-    "font-family": "'Inter', system-ui, sans-serif",
+    "nombre": "pagina",
+    "width": "100%",
     "min-height": "100vh",
-    "overflow": "hidden",
-    "perspective": "1000px",
-    "_seeds": {
-        "glass-panel": {
-            "backdrop-filter": "blur(40px) saturate(150%)",
-            "background": "rgba(255, 255, 255, 0.02)",
-            "border": "1px solid rgba(255, 255, 255, 0.08)",
-            "border-radius": "32px",
-            "box-shadow": "0 20px 80px rgba(0,0,0,0.8)"
-        },
-        "neon-glow": {
-            "color": "$variables.theme.accent",
-            "text-shadow": "0 0 10px $variables.theme.accent_glow, 0 0 30px $variables.theme.accent_glow"
-        }
-    },
-    "variables": {
-        "theme": {
-            "bg": "#010103",
-            "text": "#ffffff",
-            "accent": "#00f0ff",
-            "accent_glow": "rgba(0, 240, 255, 0.5)",
-            "glass": "rgba(255, 255, 255, 0.03)"
-        },
-        "state": {
-            "active_module": "SYMPHONY",
-            "intensity": 1.0,
-            "phys_x": 50,
-            "phys_y": 50
-        }
-    },
-    "templates": {
-        "NeuralCore": {
-            "position": "absolute",
-            "width": "{{size}}",
-            "height": "{{size}}",
-            "border-radius": "50%",
-            "background": "{{color}}",
-            "filter": "blur(math({{size}} / 2)px)",
-            "opacity": "math(0.2 * $variables.state.intensity)",
-            "left": "math(50 + cos(time * {{speed}} + {{offset}}) * 35)%",
-            "top": "math(50 + sin(time * {{speed}} * 0.8 + {{offset}}) * 35)%",
-            "transform": "scale(math(1 + sin(time) * 0.2))"
-        },
-        "StudioTab": {
-            "padding": "12px 20px",
-            "border-radius": "100px",
-            "border": "1px solid math($variables.state.active_module === '{{label}}' ? '$variables.theme.accent' : 'rgba(255,255,255,0.05)')",
-            "background": "math($variables.state.active_module === '{{label}}' ? 'rgba(0, 240, 255, 0.1)' : 'transparent')",
-            "color": "math($variables.state.active_module === '{{label}}' ? '$variables.theme.accent' : '#555')",
-            "cursor": "pointer",
-            "transition": "all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1)",
-            "texto": "{{label}}",
-            "font-size": "0.6rem",
-            "font-weight": "800",
-            "letter-spacing": "2px",
-            "onClick": [
-                { "type": "set", "path": "variables.state.active_module", "value": "{{label}}" }
-            ],
-            "hover": {
-                "border-color": "$variables.theme.accent",
-                "color": "#fff"
-            }
-        },
-        "FeatureCard": {
-            "_seed": "glass-panel",
-            "flex": "1",
-            "padding": "30px",
-            "display": "flex",
-            "flex-direction": "column",
-            "gap": "12px",
-            "icon": { "texto": "{{icon}}", "font-size": "2rem" },
-            "title": { "texto": "{{title}}", "font-weight": "800", "font-size": "1.1rem" },
-            "desc": { "texto": "{{desc}}", "opacity": "0.4", "font-size": "0.85rem", "line-height": "1.6" },
-            "hover": {
-                "transform": "translateY(-10px)",
-                "background": "rgba(255,255,255,0.06)",
-                "border-color": "$variables.theme.accent"
-            }
-        }
-    },
-    "background_orchestrator": {
+    "background": "#1e1e2e",
+    "font-family": "'Inter', system-ui, sans-serif",
+    "navbar": {
+        "nombre": "barra de navegacion",
+        "width": "100%",
+        "height": "70px",
+        "background": "rgba(30, 30, 46, 0.8)",
         "position": "fixed",
-        "inset": "0",
-        "z-index": "-1",
-        "core_1": { "_template": "NeuralCore", "props": { "size": "600px", "color": "#0a1a3a", "speed": "0.4", "offset": "0" } },
-        "core_2": { "_template": "NeuralCore", "props": { "size": "400px", "color": "#1a0a3a", "speed": "0.6", "offset": "3" } },
-        "grid": {
+        "top": "0",
+        "left": "0",
+
+        "display": "flex",
+        "align-items": "center",
+        "justify-content": "space-between",
+        "padding": "0 2rem 0 10rem",
+        "backdrop-filter": "blur(20px)",
+        "logo": {
+            "nombre": "logo",
+            "width": "160px",
+            "height": "160px",
             "position": "absolute",
-            "inset": "0",
-            "background-image": "radial-gradient(rgba(0,240,255,0.05) 1px, transparent 1px)",
-            "background-size": "40px 40px",
-            "opacity": "0.3"
+            "top": "17px",
+            "left": "28px",
+            "background-image": "url('https://gabqc77s-spec.github.io/eficell/uploads/chromaclear-result%20(10).png')",
+            "background-size": "contain",
+            "background-repeat": "no-repeat",
+            "background-position": "center"
+        },
+        "nav-links": {
+            "nombre": "enlaces",
+            "display": "flex",
+            "gap": "2rem",
+            "align-items": "center",
+            "link-inicio": {
+                "nombre": "enlace",
+                "texto": "Inicio",
+                "color": "rgba(240, 240, 240, 0.7)",
+                "font-size": "0.9rem",
+                "cursor": "pointer",
+                "transition": "color 0.2s ease",
+                "hover": {
+                    "color": "#f0f0f0"
+                }
+            },
+            "link-servicios": {
+                "nombre": "enlace",
+                "texto": "Servicios",
+                "color": "rgba(240, 240, 240, 0.7)",
+                "font-size": "0.9rem",
+                "cursor": "pointer",
+                "transition": "color 0.2s ease",
+                "hover": {
+                    "color": "#f0f0f0"
+                }
+            },
+            "link-nosotros": {
+                "nombre": "enlace",
+                "texto": "Nosotros",
+                "color": "rgba(240, 240, 240, 0.7)",
+                "font-size": "0.9rem",
+                "cursor": "pointer",
+                "transition": "color 0.2s ease",
+                "hover": {
+                    "color": "#f0f0f0"
+                }
+            },
+            "link-contacto": {
+                "nombre": "enlace",
+                "texto": "Contacto",
+                "color": "rgba(240, 240, 240, 0.7)",
+                "font-size": "0.9rem",
+                "cursor": "pointer",
+                "transition": "color 0.2s ease",
+                "hover": {
+                    "color": "#f0f0f0"
+                }
+            }
+        },
+        "boton-cta": {
+            "nombre": "boton cotizar",
+            "texto": "Cotizar Ahora",
+            "background": "#f59e0b",
+            "color": "#ffffff",
+            "padding": "10px 24px",
+            "border-radius": "24px",
+            "font-size": "0.88rem",
+            "font-weight": "600",
+            "cursor": "pointer",
+            "transition": "all 0.2s ease",
+            "hover": {
+                "transform": "scale(1.05)",
+                "background": "#d97706",
+                "box-shadow": "0 4px 15px rgba(217, 119, 6, 0.4)"
+            }
         }
     },
-    "workspace": {
+    "hero": {
+        "nombre": "seccion hero",
+        "width": "100%",
+        "min-height": "100vh",
         "display": "flex",
         "flex-direction": "column",
         "align-items": "center",
-        "justify-content": "flex-start",
-        "min-height": "100vh",
-        "padding": "120px 60px 60px",
-        "gap": "60px",
-        "navigation": {
-            "display": "flex",
-            "gap": "12px",
-            "padding": "8px",
-            "border-radius": "100px",
-            "background": "rgba(255,255,255,0.02)",
-            "border": "1px solid rgba(255,255,255,0.05)",
-            "position": "fixed",
-            "top": "40px",
-            "z-index": "1000",
-            "backdrop-filter": "blur(20px)",
-            "item_1": { "_template": "StudioTab", "props": { "label": "SYMPHONY" } },
-            "item_2": { "_template": "StudioTab", "props": { "label": "NEURAL" } },
-            "item_3": { "_template": "StudioTab", "props": { "label": "KINETIC" } }
+        "justify-content": "center",
+        "text-align": "center",
+        "padding": "120px 2rem 4rem",
+        "background": "radial-gradient(ellipse at 70% 20%, rgba(217, 119, 6, 0.06) 0%, transparent 50%), radial-gradient(ellipse at 30% 80%, rgba(45, 138, 78, 0.04) 0%, transparent 50%)",
+        "badge": {
+            "nombre": "badge disponible",
+            "texto": "● Disponible ahora",
+            "color": "rgba(240, 240, 240, 0.7)",
+            "font-size": "0.85rem",
+            "padding": "6px 16px",
+            "border-radius": "20px",
+            "border": "1px solid rgba(255, 255, 255, 0.1)",
+            "margin-bottom": "2rem"
         },
-        "liquid_interface": {
-            "_seed": "glass-panel",
-            "width": "100%",
-            "max-width": "900px",
-            "padding": "60px",
+        "titulo-contenedor": {
+            "nombre": "titulo completo",
             "display": "flex",
-            "flex-direction": "column",
-            "gap": "40px",
-            "transform": "rotateX(math(my * 10 - 5)deg) rotateY(math(mx * 10 - 5)deg)",
-            "transition": "transform 0.1s ease-out",
-            "header": {
-                "display": "flex",
-                "justify-content": "space-between",
-                "align-items": "flex-start",
-                "meta": {
-                    "display": "flex",
-                    "flex-direction": "column",
-                    "gap": "8px",
-                    "title": {
-                        "texto": "OMNIVERSE_ARCHIVE",
-                        "font-size": "2.5rem",
-                        "font-weight": "900",
-                        "letter-spacing": "-1px",
-                        "_seed": "neon-glow"
-                    },
-                    "subtitle": {
-                        "texto": "MODULAR_LOGIC_UNIT // 00.9.10",
-                        "font-size": "0.6rem",
-                        "opacity": "0.3",
-                        "letter-spacing": "3px"
-                    }
-                },
-                "status_indicator": {
-                    "width": "12px",
-                    "height": "12px",
-                    "border-radius": "50%",
-                    "background": "#4ade80",
-                    "box-shadow": "0 0 20px #4ade80",
-                    "transform": "scale(math(1 + sin(time * 5) * 0.3))"
-                }
-            },
-            "canvas_area": {
-                "height": "300px",
-                "border": "1px dashed rgba(255,255,255,0.1)",
-                "border-radius": "24px",
-                "background": "rgba(0,0,0,0.2)",
-                "display": "flex",
-                "align-items": "center",
-                "justify-content": "center",
-                "overflow": "hidden",
-                "relative_layer": {
-                    "position": "relative",
-                    "width": "100%",
-                    "height": "100%",
-                    "kinetic_node": {
-                        "width": "80px",
-                        "height": "80px",
-                        "border-radius": "20px",
-                        "background": "linear-gradient(135deg, $variables.theme.accent, #ff00ff)",
-                        "position": "absolute",
-                        "left": "math(mx * 100)%",
-                        "top": "math(my * 100)%",
-                        "transform": "translate(-50%, -50%) rotate(math(time * 50)deg)",
-                        "box-shadow": "0 0 50px rgba(0,240,255,0.3)",
-                        "onMouseEnter": [ { "type": "set", "path": "variables.state.intensity", "value": "2.0" } ],
-                        "onMouseLeave": [ { "type": "set", "path": "variables.state.intensity", "value": "1.0" } ]
-                    }
-                }
-            },
-            "description": {
-                "texto": "Module: $variables.state.active_module. High-precision transcription engine running at 60FPS. All visual parameters are derived from high-frequency math strings resolved in the main execution loop.",
-                "font-size": "0.8rem",
-                "line-height": "1.7",
-                "opacity": "0.5"
-            }
-        },
-        "features_grid": {
-            "width": "100%",
-            "max-width": "1000px",
-            "display": "flex",
-            "gap": "20px",
-            "feat_1": { "_template": "FeatureCard", "props": { "icon": "⚛", "title": "Surgical Updates", "desc": "Updates only the properties that changed, preventing massive layout recalculations." } },
-            "feat_2": { "_template": "FeatureCard", "props": { "icon": "⚡", "title": "60FPS Engine", "desc": "Optimized math compilation ensures fluid interactions even with complex physics." } },
-            "feat_3": { "_template": "FeatureCard", "props": { "icon": "∞", "title": "Infinite Logic", "desc": "JSON nodes can contain deep logical expressions and lifecycle event hooks." } }
-        },
-        "physics_playground": {
-            "_seed": "glass-panel",
-            "width": "100%",
-            "max-width": "1000px",
-            "height": "500px",
-            "display": "flex",
-            "flex-direction": "column",
-            "align-items": "center",
+            "flex-wrap": "wrap",
             "justify-content": "center",
-            "background": "#000",
-            "overflow": "hidden",
-            "relative": {
-                "position": "relative",
-                "width": "100%", "height": "100%",
-                "text": {
-                    "position": "absolute", "top": "20px", "left": "20px", "texto": "// PHYSICS_STRESS_TEST", "font-size": "0.6rem", "opacity": "0.3", "font-family": "monospace"
-                },
-                "particle_1": {
-                    "width": "120px", "height": "120px", "border-radius": "50%", "background": "rgba(0, 240, 255, 0.2)",
-                    "position": "absolute", "filter": "blur(40px)",
-                    "left": "math(50 + sin(time) * 30)%",
-                    "top": "math(50 + cos(time * 1.5) * 20)%"
-                },
-                "floating_card": {
-                    "width": "200px", "padding": "20px", "background": "rgba(255,255,255,0.05)", "border-radius": "16px",
-                    "position": "absolute", "z-index": "10", "border": "1px solid rgba(255,255,255,0.1)",
-                    "left": "math(50 + sin(time * 0.5) * 25)%",
-                    "top": "math(50 + cos(time * 0.7) * 15)%",
-                    "transform": "translate(-50%, -50%) rotate(math(sin(time) * 10)deg)",
-                    "title": { "texto": "KINETIC_UNIT", "font-weight": "800", "font-size": "0.7rem", "text-align": "center" }
+            "gap": "0 0.35em",
+            "margin-bottom": "1.5rem",
+            "max-width": "800px",
+            "titulo-1": {
+                "nombre": "parte titulo",
+                "texto": "Energía Sostenible Para",
+                "font-size": "clamp(2.5rem, 6vw, 4.5rem)",
+                "font-weight": "800",
+                "color": "#f0f0f0",
+                "line-height": "1.15"
+            },
+            "titulo-2": {
+                "nombre": "parte titulo highlight",
+                "texto": "Tu Futuro",
+                "font-size": "clamp(2.5rem, 6vw, 4.5rem)",
+                "font-weight": "800",
+                "font-style": "italic",
+                "color": "#d97706",
+                "line-height": "1.15"
+            }
+        },
+        "subtitulo": {
+            "nombre": "subtitulo",
+            "texto": "Soluciones integrales en energía solar, eficiencia energética e hidrógeno verde. Acompañamos a empresas, instituciones y comunidades desde la evaluación inicial hasta la implementación de sistemas sustentables.",
+            "color": "rgba(240, 240, 240, 0.5)",
+            "font-size": "1rem",
+            "line-height": "1.7",
+            "max-width": "650px",
+            "margin-bottom": "2.5rem"
+        },
+        "botones-hero": {
+            "nombre": "botones",
+            "display": "flex",
+            "gap": "1.5rem",
+            "flex-wrap": "wrap",
+            "justify-content": "center",
+            "margin-bottom": "4rem",
+            "boton-evaluacion": {
+                "nombre": "boton principal",
+                "texto": "Solicitar Evaluación",
+                "background": "#f59e0b",
+                "color": "#ffffff",
+                "padding": "14px 32px",
+                "border-radius": "12px",
+                "font-size": "1rem",
+                "font-weight": "600",
+                "cursor": "pointer",
+                "transition": "all 0.2s ease",
+                "hover": {
+                    "transform": "translateY(-2px)",
+                    "background": "#d97706",
+                    "box-shadow": "0 6px 20px rgba(217, 119, 6, 0.4)"
+                }
+            },
+            "boton-servicios": {
+                "nombre": "boton secundario",
+                "texto": "Conocer Servicios",
+                "background": "transparent",
+                "color": "#f0f0f0",
+                "padding": "14px 32px",
+                "font-size": "1rem",
+                "font-weight": "500",
+                "cursor": "pointer",
+                "transition": "all 0.2s ease",
+                "hover": {
+                    "color": "#d97706"
                 }
             }
         },
-        "footer": {
-            "padding": "40px", "opacity": "0.2", "font-size": "0.6rem", "letter-spacing": "2px",
-            "texto": "© 2026 OMNIVERSE STUDIOS // DESIGNED BY TRANSMUTATION"
+        "stats": {
+            "nombre": "estadisticas",
+            "display": "flex",
+            "gap": "4rem",
+            "justify-content": "center",
+            "flex-wrap": "wrap",
+            "stat-ahorro": {
+                "nombre": "stat ahorro",
+                "display": "flex",
+                "flex-direction": "column",
+                "align-items": "center",
+                "gap": "0.5rem",
+                "numero-ahorro": {
+                    "nombre": "numero",
+                    "texto": "30%",
+                    "font-size": "2.5rem",
+                    "font-weight": "800",
+                    "color": "#f59e0b"
+                },
+                "label-ahorro": {
+                    "nombre": "label",
+                    "texto": "AHORRO GARANTIZADO",
+                    "font-size": "0.7rem",
+                    "color": "rgba(240, 240, 240, 0.4)",
+                    "letter-spacing": "2px",
+                    "font-weight": "500"
+                }
+            },
+            "stat-compromiso": {
+                "nombre": "stat compromiso",
+                "display": "flex",
+                "flex-direction": "column",
+                "align-items": "center",
+                "gap": "0.5rem",
+                "numero-compromiso": {
+                    "nombre": "numero",
+                    "texto": "100%",
+                    "font-size": "2.5rem",
+                    "font-weight": "800",
+                    "color": "#f59e0b"
+                },
+                "label-compromiso": {
+                    "nombre": "label",
+                    "texto": "COMPROMISO AMBIENTAL",
+                    "font-size": "0.7rem",
+                    "color": "rgba(240, 240, 240, 0.4)",
+                    "letter-spacing": "2px",
+                    "font-weight": "500"
+                }
+            },
+            "stat-experiencia": {
+                "nombre": "stat experiencia",
+                "display": "flex",
+                "flex-direction": "column",
+                "align-items": "center",
+                "gap": "0.5rem",
+                "numero-experiencia": {
+                    "nombre": "numero",
+                    "texto": "2",
+                    "font-size": "2.5rem",
+                    "font-weight": "800",
+                    "color": "#f59e0b"
+                },
+                "label-experiencia": {
+                    "nombre": "label",
+                    "texto": "AÑOS DE EXPERIENCIA",
+                    "font-size": "0.7rem",
+                    "color": "rgba(240, 240, 240, 0.4)",
+                    "letter-spacing": "2px",
+                    "font-weight": "500"
+                }
+            }
+        }
+    },
+    "separador-hero": {
+        "nombre": "separador",
+        "width": "100%",
+        "height": "1px",
+        "background": "rgba(255, 255, 255, 0.06)"
+    },
+    "servicios": {
+        "nombre": "seccion servicios",
+        "width": "100%",
+        "padding": "6rem 2rem",
+        "display": "flex",
+        "flex-direction": "column",
+        "align-items": "center",
+        "background": "#1e3a2a",
+        "titulo-servicios": {
+            "nombre": "titulo seccion",
+            "texto": "Nuestros Servicios",
+            "font-size": "2rem",
+            "font-weight": "700",
+            "color": "#f0f0f0",
+            "margin-bottom": "3rem",
+            "font-style": "italic"
+        },
+        "grid-servicios": {
+            "nombre": "grid de tarjetas",
+            "display": "flex",
+            "gap": "1.5rem",
+            "max-width": "1200px",
+            "width": "100%",
+            "padding-bottom": "1rem",
+            "tarjeta-fotovoltaicos": {
+                "nombre": "tarjeta fotovoltaicos",
+                "background": "rgba(255, 255, 255, 0.06)",
+                "border": "1px solid rgba(45, 138, 78, 0.3)",
+                "border-radius": "16px",
+                "padding": "3rem 2rem 2rem",
+                "min-width": "280px",
+                "min-height": "280px",
+                "flex": "1",
+                "display": "flex",
+                "flex-direction": "column",
+                "gap": "1rem",
+                "transition": "all 0.3s ease",
+                "hover": {
+                    "transform": "translateY(-4px)",
+                    "background": "rgba(255, 255, 255, 0.09)"
+                },
+                "icono-fotovoltaicos": {
+                    "nombre": "icono",
+                    "texto": "⚡",
+                    "font-size": "2rem"
+                },
+                "titulo-fotovoltaicos": {
+                    "nombre": "titulo tarjeta",
+                    "texto": "Sistemas Fotovoltaicos",
+                    "color": "#f0f0f0",
+                    "font-size": "1.1rem",
+                    "font-weight": "600"
+                },
+                "desc-fotovoltaicos": {
+                    "nombre": "descripcion",
+                    "texto": "Instalación profesional de sistemas monofásicos y trifásicos adaptados a tu consumo y necesidades energéticas.",
+                    "color": "rgba(240, 240, 240, 0.5)",
+                    "font-size": "0.88rem",
+                    "line-height": "1.6"
+                }
+            },
+            "tarjeta-mantenimiento": {
+                "nombre": "tarjeta mantenimiento",
+                "background": "rgba(255, 255, 255, 0.06)",
+                "border": "1px solid rgba(255, 255, 255, 0.08)",
+                "border-radius": "16px",
+                "padding": "3rem 2rem 2rem",
+                "min-width": "280px",
+                "min-height": "280px",
+                "flex": "1",
+                "display": "flex",
+                "flex-direction": "column",
+                "gap": "1rem",
+                "transition": "all 0.3s ease",
+                "hover": {
+                    "transform": "translateY(-4px)",
+                    "background": "rgba(255, 255, 255, 0.09)"
+                },
+                "icono-mantenimiento": {
+                    "nombre": "icono",
+                    "texto": "🔧",
+                    "font-size": "2rem"
+                },
+                "titulo-mantenimiento": {
+                    "nombre": "titulo tarjeta",
+                    "texto": "Mantenimiento",
+                    "color": "#f0f0f0",
+                    "font-size": "1.1rem",
+                    "font-weight": "600"
+                },
+                "desc-mantenimiento": {
+                    "nombre": "descripcion",
+                    "texto": "Servicio preventivo y correctivo para mantener tus paneles funcionando al máximo rendimiento.",
+                    "color": "rgba(240, 240, 240, 0.5)",
+                    "font-size": "0.88rem",
+                    "line-height": "1.6"
+                }
+            },
+            "tarjeta-auditorias": {
+                "nombre": "tarjeta auditorias",
+                "background": "rgba(255, 255, 255, 0.06)",
+                "border": "1px solid rgba(255, 255, 255, 0.08)",
+                "border-radius": "16px",
+                "padding": "3rem 2rem 2rem",
+                "min-width": "280px",
+                "min-height": "280px",
+                "flex": "1",
+                "display": "flex",
+                "flex-direction": "column",
+                "gap": "1rem",
+                "transition": "all 0.3s ease",
+                "hover": {
+                    "transform": "translateY(-4px)",
+                    "background": "rgba(255, 255, 255, 0.09)"
+                },
+                "icono-auditorias": {
+                    "nombre": "icono",
+                    "texto": "📊",
+                    "font-size": "2rem"
+                },
+                "titulo-auditorias": {
+                    "nombre": "titulo tarjeta",
+                    "texto": "Auditorías Energéticas",
+                    "color": "#f0f0f0",
+                    "font-size": "1.1rem",
+                    "font-weight": "600"
+                },
+                "desc-auditorias": {
+                    "nombre": "descripcion",
+                    "texto": "Diagnósticos de consumo y evaluación técnica-económica para optimizar tus recursos energéticos.",
+                    "color": "rgba(240, 240, 240, 0.5)",
+                    "font-size": "0.88rem",
+                    "line-height": "1.6"
+                }
+            },
+            "tarjeta-consultoria": {
+                "nombre": "tarjeta consultoria",
+                "background": "rgba(255, 255, 255, 0.06)",
+                "border": "1px solid rgba(255, 255, 255, 0.08)",
+                "border-radius": "16px",
+                "padding": "3rem 2rem 2rem",
+                "min-width": "280px",
+                "min-height": "280px",
+                "flex": "1",
+                "display": "flex",
+                "flex-direction": "column",
+                "gap": "1rem",
+                "transition": "all 0.3s ease",
+                "hover": {
+                    "transform": "translateY(-4px)",
+                    "background": "rgba(255, 255, 255, 0.09)"
+                },
+                "icono-consultoria": {
+                    "nombre": "icono",
+                    "texto": "🌱",
+                    "font-size": "2rem"
+                },
+                "titulo-consultoria": {
+                    "nombre": "titulo tarjeta",
+                    "texto": "Consultoría Verde",
+                    "color": "#f0f0f0",
+                    "font-size": "1.1rem",
+                    "font-weight": "600"
+                },
+                "desc-consultoria": {
+                    "nombre": "descripcion",
+                    "texto": "Asesoría en integración de renovables, reducción de huella de carbono y certificaciones energéticas.",
+                    "color": "rgba(240, 240, 240, 0.5)",
+                    "font-size": "0.88rem",
+                    "line-height": "1.6"
+                }
+            }
+        }
+    },
+    "nosotros": {
+        "nombre": "seccion nosotros",
+        "width": "100%",
+        "padding": "6rem 2rem",
+        "display": "flex",
+        "flex-direction": "column",
+        "max-width": "1200px",
+        "margin": "0 auto",
+        "titulo-nosotros": {
+            "nombre": "titulo seccion",
+            "texto": "¿Quiénes Somos?",
+            "font-size": "2rem",
+            "font-weight": "700",
+            "color": "#f0f0f0",
+            "margin-bottom": "1.5rem",
+            "font-style": "italic"
+        },
+        "desc-nosotros": {
+            "nombre": "descripcion",
+            "texto": "Eficell Consultores SpA es una empresa fundada por dos socios con sólida experiencia técnica, orientada a entregar soluciones integrales en energía y sostenibilidad.",
+            "color": "rgba(240, 240, 240, 0.5)",
+            "font-size": "0.95rem",
+            "line-height": "1.7",
+            "margin-bottom": "2rem",
+            "max-width": "600px"
+        },
+        "scroll-nosotros": {
+            "nombre": "scroll contenido nosotros",
+            "display": "flex",
+            "flex-direction": "column",
+            "height": "280px",
+        "card-objetivo": {
+            "nombre": "card objetivo",
+            "background": "rgba(255, 255, 255, 0.04)",
+            "border-radius": "12px",
+            "padding": "1.2rem 1.5rem",
+            "margin-bottom": "1.5rem",
+            "border-left": "3px solid #d97706",
+            "max-width": "600px",
+            "label-objetivo": {
+                "nombre": "label",
+                "texto": "Objetivo:",
+                "color": "#d97706",
+                "font-size": "0.85rem",
+                "font-weight": "700",
+                "margin-bottom": "0.3rem"
+            },
+            "texto-objetivo": {
+                "nombre": "texto objetivo",
+                "texto": "Reducir al menos un 30% los costos operativos energéticos y mejorar la huella de carbono de nuestros clientes en los próximos 5 años.",
+                "color": "rgba(240, 240, 240, 0.6)",
+                "font-size": "0.88rem",
+                "line-height": "1.6"
+            }
+        },
+        "card-mision": {
+            "nombre": "card mision",
+            "background": "rgba(255, 255, 255, 0.04)",
+            "border-radius": "12px",
+            "padding": "1.5rem",
+            "margin-bottom": "1.5rem",
+            "border-left": "3px solid #d97706",
+            "max-width": "600px",
+            "display": "flex",
+            "gap": "1rem",
+            "icono-mision": {
+                "nombre": "icono",
+                "texto": "🎯",
+                "font-size": "1.5rem"
+            },
+            "contenido-mision": {
+                "nombre": "contenido mision",
+                "display": "flex",
+                "flex-direction": "column",
+                "gap": "0.3rem",
+                "label-mision": {
+                    "nombre": "label",
+                    "texto": "Misión",
+                    "color": "#d97706",
+                    "font-size": "0.9rem",
+                    "font-weight": "700"
+                },
+                "texto-mision": {
+                    "nombre": "texto mision",
+                    "texto": "Desarrollar e implementar soluciones integrales en energías renovables, eficiencia energética e hidrógeno verde, mediante proyectos fotovoltaicos, eléctricos y sistemas sustentables tales como riego solar, sistemas de bombeo con paneles solares y cercos eléctricos solares, incorporando tecnologías innovadoras como la nanotecnología para optimizar los procesos de mantención y prolongar la vida útil de los activos, contribuyendo a la transición energética de empresas y comunidades con un equipo de profesionales idóneos y con experiencia, orientados a la sostenibilidad y al cuidado del medio ambiente.",
+                    "color": "rgba(240, 240, 240, 0.55)",
+                    "font-size": "0.85rem",
+                    "line-height": "1.7"
+                }
+            }
+        },
+        "card-vision": {
+            "nombre": "card vision",
+            "background": "rgba(255, 255, 255, 0.04)",
+            "border-radius": "12px",
+            "padding": "1.5rem",
+            "margin-bottom": "1.5rem",
+            "border-left": "3px solid #d97706",
+            "max-width": "600px",
+            "display": "flex",
+            "gap": "1rem",
+            "icono-vision": {
+                "nombre": "icono",
+                "texto": "🔭",
+                "font-size": "1.5rem"
+            },
+            "contenido-vision": {
+                "nombre": "contenido vision",
+                "display": "flex",
+                "flex-direction": "column",
+                "gap": "0.3rem",
+                "label-vision": {
+                    "nombre": "label",
+                    "texto": "Visión",
+                    "color": "#d97706",
+                    "font-size": "0.9rem",
+                    "font-weight": "700"
+                },
+                "texto-vision": {
+                    "nombre": "texto vision",
+                    "texto": "Ser una empresa líder en la región en el desarrollo de proyectos de innovación tecnológica en energías renovables, eficiencia energética e hidrógeno verde, reconocida por integrar soluciones de riego solar, sistemas de bombeo fotovoltaico, nanotecnología y consultoría en eficiencia energética en sus proyectos, para mejorar el desempeño, la eficiencia operativa y la durabilidad de los activos, aportando activamente a la transición energética hacia un modelo más limpio, eficiente y sustentable.",
+                    "color": "rgba(240, 240, 240, 0.55)",
+                    "font-size": "0.85rem",
+                    "line-height": "1.7"
+                }
+            }
+        },
+        "placeholder-imagen": {
+            "nombre": "imagen placeholder",
+            "width": "100%",
+            "max-width": "600px",
+            "height": "200px",
+            "border": "2px solid rgba(45, 138, 78, 0.4)",
+            "border-radius": "16px",
+            "background": "rgba(45, 138, 78, 0.05)",
+            "margin-top": "2rem"
+            }
+        }
+    },
+    "valores": {
+        "nombre": "seccion valores",
+        "width": "100%",
+        "padding": "4rem 2rem",
+        "display": "flex",
+        "flex-direction": "column",
+        "align-items": "center",
+        "titulo-valores": {
+            "nombre": "titulo seccion",
+            "texto": "Nuestros 5 Pilares",
+            "font-size": "2rem",
+            "font-weight": "700",
+            "color": "#f0f0f0",
+            "margin-bottom": "3rem",
+            "font-style": "italic"
+        },
+        "grid-valores": {
+            "nombre": "grid valores",
+            "display": "grid",
+            "grid-template-columns": "repeat(2, 1fr)",
+            "gap": "1rem",
+            "max-width": "1000px",
+            "width": "100%",
+            "valor-sostenibilidad": {
+                "nombre": "valor sostenibilidad",
+                "background": "linear-gradient(135deg, #1e6b4a, #2d8a4e)",
+                "border-radius": "16px",
+                "padding": "2rem",
+                "text-align": "center",
+                "display": "flex",
+                "flex-direction": "column",
+                "align-items": "center",
+                "gap": "0.8rem",
+                "icono-sos": {
+                    "nombre": "icono",
+                    "texto": "🌍",
+                    "font-size": "2rem"
+                },
+                "titulo-sos": {
+                    "nombre": "titulo",
+                    "texto": "Sostenibilidad",
+                    "color": "#ffffff",
+                    "font-size": "1rem",
+                    "font-weight": "700"
+                },
+                "desc-sos": {
+                    "nombre": "descripcion",
+                    "texto": "Reducimos la huella de carbono y promovemos el uso responsable de los recursos naturales.",
+                    "color": "rgba(255, 255, 255, 0.7)",
+                    "font-size": "0.82rem",
+                    "line-height": "1.5"
+                }
+            },
+            "valor-compromiso": {
+                "nombre": "valor compromiso social",
+                "background": "linear-gradient(135deg, #1e6b4a, #2d8a4e)",
+                "border-radius": "16px",
+                "padding": "2rem",
+                "text-align": "center",
+                "display": "flex",
+                "flex-direction": "column",
+                "align-items": "center",
+                "gap": "0.8rem",
+                "icono-comp": {
+                    "nombre": "icono",
+                    "texto": "🤝",
+                    "font-size": "2rem"
+                },
+                "titulo-comp": {
+                    "nombre": "titulo",
+                    "texto": "Compromiso Social",
+                    "color": "#ffffff",
+                    "font-size": "1rem",
+                    "font-weight": "700"
+                },
+                "desc-comp": {
+                    "nombre": "descripcion",
+                    "texto": "Trabajamos con comunidades, liceos y vecinos impulsando la educación ambiental.",
+                    "color": "rgba(255, 255, 255, 0.7)",
+                    "font-size": "0.82rem",
+                    "line-height": "1.5"
+                }
+            },
+            "valor-excelencia": {
+                "nombre": "valor excelencia tecnica",
+                "background": "linear-gradient(135deg, #1e6b4a, #2d8a4e)",
+                "border-radius": "16px",
+                "padding": "2rem",
+                "text-align": "center",
+                "display": "flex",
+                "flex-direction": "column",
+                "align-items": "center",
+                "gap": "0.8rem",
+                "icono-exc": {
+                    "nombre": "icono",
+                    "texto": "⚙️",
+                    "font-size": "2rem"
+                },
+                "titulo-exc": {
+                    "nombre": "titulo",
+                    "texto": "Excelencia Técnica",
+                    "color": "#ffffff",
+                    "font-size": "1rem",
+                    "font-weight": "700"
+                },
+                "desc-exc": {
+                    "nombre": "descripcion",
+                    "texto": "Altos estándares y mejora continua con innovación tecnológica en cada proyecto.",
+                    "color": "rgba(255, 255, 255, 0.7)",
+                    "font-size": "0.82rem",
+                    "line-height": "1.5"
+                }
+            },
+            "valor-educacion": {
+                "nombre": "valor educacion",
+                "background": "linear-gradient(135deg, #1e6b4a, #2d8a4e)",
+                "border-radius": "16px",
+                "padding": "2rem",
+                "text-align": "center",
+                "display": "flex",
+                "flex-direction": "column",
+                "align-items": "center",
+                "gap": "0.8rem",
+                "icono-edu": {
+                    "nombre": "icono",
+                    "texto": "📚",
+                    "font-size": "2rem"
+                },
+                "titulo-edu": {
+                    "nombre": "titulo",
+                    "texto": "Educación",
+                    "color": "#ffffff",
+                    "font-size": "1rem",
+                    "font-weight": "700"
+                },
+                "desc-edu": {
+                    "nombre": "descripcion",
+                    "texto": "Capacitación y transferencia de conocimientos para fortalecer capacidades locales.",
+                    "color": "rgba(255, 255, 255, 0.7)",
+                    "font-size": "0.82rem",
+                    "line-height": "1.5"
+                }
+            },
+            "valor-compartido": {
+                "nombre": "valor compartido",
+                "background": "linear-gradient(135deg, #1e6b4a, #2d8a4e)",
+                "border-radius": "16px",
+                "padding": "2rem",
+                "text-align": "center",
+                "display": "flex",
+                "flex-direction": "column",
+                "align-items": "center",
+                "gap": "0.8rem",
+                "grid-column": "1 / 2",
+                "icono-vc": {
+                    "nombre": "icono",
+                    "texto": "💚",
+                    "font-size": "2rem"
+                },
+                "titulo-vc": {
+                    "nombre": "titulo",
+                    "texto": "Valor Compartido",
+                    "color": "#ffffff",
+                    "font-size": "1rem",
+                    "font-weight": "700"
+                },
+                "desc-vc": {
+                    "nombre": "descripcion",
+                    "texto": "Creamos empleo verde y relaciones de largo plazo basadas en confianza mutua.",
+                    "color": "rgba(255, 255, 255, 0.7)",
+                    "font-size": "0.82rem",
+                    "line-height": "1.5"
+                }
+            }
+        }
+    },
+    "equipo": {
+        "nombre": "seccion equipo",
+        "width": "100%",
+        "padding": "6rem 2rem",
+        "display": "flex",
+        "flex-direction": "column",
+        "align-items": "center",
+        "background": "#1e3a2a",
+        "titulo-equipo": {
+            "nombre": "titulo seccion",
+            "texto": "Nuestro Equipo",
+            "font-size": "2rem",
+            "font-weight": "700",
+            "color": "#f0f0f0",
+            "margin-bottom": "3rem",
+            "font-style": "italic"
+        },
+        "grid-equipo": {
+            "nombre": "grid equipo",
+            "display": "grid",
+            "grid-template-columns": "repeat(3, 1fr)",
+            "gap": "1.5rem",
+            "max-width": "900px",
+            "width": "100%",
+            "miembro-pamela": {
+                "nombre": "card pamela",
+                "background": "rgba(255, 255, 255, 0.06)",
+                "border": "1px solid rgba(45, 138, 78, 0.3)",
+                "border-radius": "16px",
+                "padding": "2rem",
+                "text-align": "center",
+                "display": "flex",
+                "flex-direction": "column",
+                "align-items": "center",
+                "gap": "1rem",
+                "transition": "all 0.4s ease",
+                "hover": {
+                    "transform": "scale(1.05)",
+                    "background": "rgba(45, 138, 78, 0.15)"
+                },
+                "avatar-pamela": {
+                    "nombre": "avatar",
+                    "width": "80px",
+                    "height": "80px",
+                    "border-radius": "50%",
+                    "border": "2px solid #2d8a4e",
+                    "background": "#1e3a2a",
+                    "background-image": "url('https://gabqc77s-spec.github.io/eficell/uploads/Imagen1.png')",
+                    "background-size": "170%",
+                    "background-position": "2% 0%"
+                },
+                "nombre-pamela": {
+                    "nombre": "nombre miembro",
+                    "texto": "Pamela Veas Cortés",
+                    "color": "#f0f0f0",
+                    "font-size": "0.95rem",
+                    "font-weight": "600"
+                },
+                "cargo-pamela": {
+                    "nombre": "cargo",
+                    "texto": "Gerente General",
+                    "color": "rgba(240, 240, 240, 0.4)",
+                    "font-size": "0.8rem"
+                }
+            },
+            "miembro-pablo": {
+                "nombre": "card pablo",
+                "background": "rgba(255, 255, 255, 0.06)",
+                "border": "1px solid rgba(45, 138, 78, 0.3)",
+                "border-radius": "16px",
+                "padding": "2rem",
+                "text-align": "center",
+                "display": "flex",
+                "flex-direction": "column",
+                "align-items": "center",
+                "gap": "1rem",
+                "transition": "all 0.4s ease",
+                "hover": {
+                    "transform": "scale(1.05)",
+                    "background": "rgba(45, 138, 78, 0.15)"
+                },
+                "avatar-pablo": {
+                    "nombre": "avatar",
+                    "width": "80px",
+                    "height": "80px",
+                    "border-radius": "50%",
+                    "border": "2px solid #2d8a4e",
+                    "background": "#2d8a4e",
+                    "display": "flex",
+                    "align-items": "center",
+                    "justify-content": "center",
+                    "background-image": "url('https://ui-avatars.com/api/?name=Pablo+Navarro&background=random&size=200')",
+                    "background-size": "cover",
+                    "background-position": "center"
+                },
+                "nombre-pablo": {
+                    "nombre": "nombre miembro",
+                    "texto": "Pablo Navarro D.",
+                    "color": "#f0f0f0",
+                    "font-size": "0.95rem",
+                    "font-weight": "600"
+                },
+                "cargo-pablo": {
+                    "nombre": "cargo",
+                    "texto": "Gerente Operaciones - Ing. Eléctrico",
+                    "color": "rgba(240, 240, 240, 0.4)",
+                    "font-size": "0.8rem"
+                }
+            },
+            "miembro-enrique": {
+                "nombre": "card enrique",
+                "background": "rgba(255, 255, 255, 0.06)",
+                "border": "1px solid rgba(45, 138, 78, 0.3)",
+                "border-radius": "16px",
+                "padding": "2rem",
+                "text-align": "center",
+                "display": "flex",
+                "flex-direction": "column",
+                "align-items": "center",
+                "gap": "1rem",
+                "transition": "all 0.4s ease",
+                "hover": {
+                    "transform": "scale(1.05)",
+                    "background": "rgba(45, 138, 78, 0.15)"
+                },
+                "avatar-enrique": {
+                    "nombre": "avatar",
+                    "width": "80px",
+                    "height": "80px",
+                    "border-radius": "50%",
+                    "border": "2px solid #8b6b4a",
+                    "background": "#8b6b4a",
+                    "display": "flex",
+                    "align-items": "center",
+                    "justify-content": "center",
+                    "background-image": "url('https://ui-avatars.com/api/?name=Enrique+Palacios&background=random&size=200')",
+                    "background-size": "cover",
+                    "background-position": "center"
+                },
+                "nombre-enrique": {
+                    "nombre": "nombre miembro",
+                    "texto": "Enrique Palacios",
+                    "color": "#f0f0f0",
+                    "font-size": "0.95rem",
+                    "font-weight": "600"
+                },
+                "cargo-enrique": {
+                    "nombre": "cargo",
+                    "texto": "Ing. Químico - Especialista en Fundición",
+                    "color": "rgba(240, 240, 240, 0.4)",
+                    "font-size": "0.8rem"
+                }
+            },
+            "miembro-stephane": {
+                "nombre": "card stephane",
+                "background": "rgba(255, 255, 255, 0.06)",
+                "border": "1px solid rgba(45, 138, 78, 0.3)",
+                "border-radius": "16px",
+                "padding": "2rem",
+                "text-align": "center",
+                "display": "flex",
+                "flex-direction": "column",
+                "align-items": "center",
+                "gap": "1rem",
+                "transition": "all 0.4s ease",
+                "hover": {
+                    "transform": "scale(1.05)",
+                    "background": "rgba(45, 138, 78, 0.15)"
+                },
+                "avatar-stephane": {
+                    "nombre": "avatar",
+                    "width": "80px",
+                    "height": "80px",
+                    "border-radius": "50%",
+                    "border": "2px solid #3b82f6",
+                    "background": "#3b82f6",
+                    "display": "flex",
+                    "align-items": "center",
+                    "justify-content": "center",
+                    "background-image": "url('https://ui-avatars.com/api/?name=Stephane+Acuna&background=random&size=200')",
+                    "background-size": "cover",
+                    "background-position": "center"
+                },
+                "nombre-stephane": {
+                    "nombre": "nombre miembro",
+                    "texto": "Stephane Acuña",
+                    "color": "#f0f0f0",
+                    "font-size": "0.95rem",
+                    "font-weight": "600"
+                },
+                "cargo-stephane": {
+                    "nombre": "cargo",
+                    "texto": "Ing. Biotecnología - Especialista Proyecto Innovación",
+                    "color": "rgba(240, 240, 240, 0.4)",
+                    "font-size": "0.8rem"
+                }
+            },
+            "miembro-julio": {
+                "nombre": "card julio",
+                "background": "rgba(255, 255, 255, 0.06)",
+                "border": "1px solid rgba(45, 138, 78, 0.3)",
+                "border-radius": "16px",
+                "padding": "2rem",
+                "text-align": "center",
+                "display": "flex",
+                "flex-direction": "column",
+                "align-items": "center",
+                "gap": "1rem",
+                "transition": "all 0.4s ease",
+                "hover": {
+                    "transform": "scale(1.05)",
+                    "background": "rgba(45, 138, 78, 0.15)"
+                },
+                "avatar-julio": {
+                    "nombre": "avatar",
+                    "width": "80px",
+                    "height": "80px",
+                    "border-radius": "50%",
+                    "border": "2px solid #f0e0d0",
+                    "background": "#f0e0d0",
+                    "display": "flex",
+                    "align-items": "center",
+                    "justify-content": "center",
+                    "background-image": "url('https://ui-avatars.com/api/?name=Julio+Delgado&background=random&size=200')",
+                    "background-size": "cover",
+                    "background-position": "center"
+                },
+                "nombre-julio": {
+                    "nombre": "nombre miembro",
+                    "texto": "Julio Delgado",
+                    "color": "#f0f0f0",
+                    "font-size": "0.95rem",
+                    "font-weight": "600"
+                },
+                "cargo-julio": {
+                    "nombre": "cargo",
+                    "texto": "Ing. Químico - Ing. Prevención Riesgo",
+                    "color": "rgba(240, 240, 240, 0.4)",
+                    "font-size": "0.8rem"
+                }
+            }
+        }
+    },
+    "contacto": {
+        "nombre": "seccion contacto",
+        "width": "100%",
+        "padding": "6rem 2rem",
+        "display": "flex",
+        "flex-direction": "column",
+        "align-items": "center",
+        "text-align": "center",
+        "titulo-contacto": {
+            "nombre": "titulo seccion",
+            "texto": "¿Listo Para el Cambio?",
+            "font-size": "2rem",
+            "font-weight": "700",
+            "color": "#f0f0f0",
+            "margin-bottom": "1rem",
+            "font-style": "italic"
+        },
+        "desc-contacto": {
+            "nombre": "subtitulo",
+            "texto": "Obtén una evaluación gratuita y personalizada para tu proyecto energético",
+            "color": "rgba(240, 240, 240, 0.5)",
+            "font-size": "1rem",
+            "margin-bottom": "2rem"
+        },
+        "boton-contacto": {
+            "nombre": "boton contacto",
+            "texto": "Cotizar Ahora",
+            "background": "#d97706",
+            "color": "#ffffff",
+            "padding": "14px 32px",
+            "border-radius": "12px",
+            "font-size": "1rem",
+            "font-weight": "600",
+            "cursor": "pointer",
+            "transition": "all 0.2s ease",
+            "hover": {
+                "transform": "translateY(-2px)",
+                "box-shadow": "0 6px 20px rgba(217, 119, 6, 0.4)"
+            }
+        }
+    },
+    "footer": {
+        "nombre": "pie de pagina",
+        "width": "100%",
+        "padding": "2rem 3rem",
+        "display": "flex",
+        "justify-content": "space-between",
+        "align-items": "center",
+        "background": "linear-gradient(135deg, #1e3a2a, #2d8a4e)",
+        "footer-brand": {
+            "nombre": "brand footer",
+            "display": "flex",
+            "align-items": "center",
+            "gap": "0.5rem",
+            "footer-emoji": {
+                "nombre": "emoji",
+                "texto": "🌱",
+                "font-size": "1.2rem"
+            },
+            "footer-nombre": {
+                "nombre": "nombre brand",
+                "texto": "Eficell",
+                "color": "#f0f0f0",
+                "font-size": "1rem",
+                "font-weight": "600"
+            }
+        },
+        "texto-footer": {
+            "nombre": "copyright",
+            "texto": "© 2026 Eficell Consultores SpA. Energía sostenible para un futuro mejor.",
+            "color": "rgba(240, 240, 240, 0.6)",
+            "font-size": "0.82rem"
         }
     }
 }

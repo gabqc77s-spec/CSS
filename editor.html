@@ -771,8 +771,10 @@
             'Identidad': ['nombre', 'tagName', 'texto', 'src', 'href'],
             'Layout': ['display', 'flex-direction', 'justify-content', 'align-items', 'flex-wrap', 'gap', 'grid-template-columns', 'grid-template-rows', 'align-self', 'justify-self', 'flex-grow', 'flex-shrink', 'position', 'top', 'left', 'right', 'bottom', 'z-index'],
             'Dimensiones': ['width', 'height', 'min-width', 'max-width', 'min-height', 'max-height', 'padding', 'margin', 'box-sizing'],
-            'Tipografía': ['font-family', 'font-size', 'font-weight', 'line-height', 'color', 'text-align', 'letter-spacing', 'text-transform', 'text-decoration'],
-            'Efectos': ['background', 'background-image', 'background-size', 'background-position', 'background-repeat', 'border', 'border-radius', 'box-shadow', 'opacity', 'transition', 'transform', 'filter', 'backdrop-filter', 'overflow', 'cursor', 'clip-path']
+            'Tipografía': ['font-family', 'font-size', 'font-weight', 'line-height', 'color', 'text-align', 'letter-spacing', 'text-transform', 'text-decoration', '-webkit-background-clip', '-webkit-text-fill-color'],
+            'Efectos': ['background', 'background-image', 'background-size', 'background-position', 'background-repeat', 'border', 'border-radius', 'box-shadow', 'opacity', 'transition', 'transform', 'filter', 'backdrop-filter', 'overflow', 'cursor', 'clip-path'],
+            'Animación': ['onMount', 'onUpdate', 'transition', 'animation'],
+            'Interacción': ['onClick', 'onMouseEnter', 'onMouseLeave', 'cursor']
         };
 
         const FONT_FAMILIES = [
@@ -1064,6 +1066,17 @@
                     groupDiv.appendChild(createBoxModelUI(target, obj));
                 }
 
+                if (groupName === 'Animación') {
+                    hasProps = true;
+                    groupDiv.appendChild(createAnimationPresets(target, obj));
+                    groupDiv.appendChild(createScrollSyncBuilder(target, obj));
+                }
+
+                if (groupName === 'Interacción') {
+                    hasProps = true;
+                    groupDiv.appendChild(createInteractionBuilder(target, obj));
+                }
+
                 NATIVE_GROUPS[groupName].forEach(key => {
                     if (['padding', 'margin'].includes(key)) { usedKeys.add(key); return; }
                     usedKeys.add(key);
@@ -1147,6 +1160,78 @@
             };
             seedDiv.appendChild(seedSelect);
             container.appendChild(seedDiv);
+        }
+
+        function createAnimationPresets(target, obj) {
+            const container = document.createElement('div');
+            container.style.cssText = 'display:grid; grid-template-columns: repeat(2, 1fr); gap:8px; margin-top:10px';
+
+            const PRESETS = {
+                'Fade In': { opacity: '0', onMount: [{ type: 'set', value: '1', target: 'style.opacity', duration: 1000 }] },
+                'Slide Up': { transform: 'translateY(50px)', opacity: '0', onMount: [{ type: 'set', value: '0', target: 'style.translateY', duration: 800 }, { type: 'set', value: '1', target: 'style.opacity', duration: 800 }] },
+                'Zoom In': { transform: 'scale(0.5)', opacity: '0', onMount: [{ type: 'set', value: '1', target: 'style.scale', duration: 600 }, { type: 'set', value: '1', target: 'style.opacity', duration: 600 }] },
+                'Float': { onUpdate: [{ type: 'math', value: 'sin(time * 2) * 10', target: 'style.translateY' }] }
+            };
+
+            Object.keys(PRESETS).forEach(name => {
+                const btn = document.createElement('button');
+                btn.className = 'btn-primary';
+                btn.style.fontSize = '0.6rem';
+                btn.style.padding = '4px';
+                btn.textContent = name;
+                btn.onclick = () => {
+                    Object.assign(target, PRESETS[name]);
+                    renderProperties(obj, selectedPath);
+                    sendToPreview();
+                };
+                container.appendChild(btn);
+            });
+            return container;
+        }
+
+        function createInteractionBuilder(target, obj) {
+            const container = document.createElement('div');
+            container.style.cssText = 'background:rgba(0,0,255,0.05); padding:10px; border-radius:4px; margin-top:10px; border:1px solid rgba(0,0,255,0.1)';
+            container.innerHTML = `<div style="font-size:0.6rem; margin-bottom:8px; color:var(--accent)">ACTION BUILDER</div>`;
+
+            const addBtn = document.createElement('button');
+            addBtn.className = 'btn-primary';
+            addBtn.textContent = '+ Toggle State';
+            addBtn.onclick = () => {
+                const path = prompt('Path to variable (e.g., variables.menuOpen):', 'variables.active');
+                if (path) {
+                    if (!target.onClick) target.onClick = [];
+                    target.onClick.push({ type: 'toggle', path: path });
+                    renderProperties(obj, selectedPath);
+                    sendToPreview();
+                }
+            };
+            container.appendChild(addBtn);
+            return container;
+        }
+
+        function createScrollSyncBuilder(target, obj) {
+            const container = document.createElement('div');
+            container.style.cssText = 'background:rgba(0,0,0,0.2); padding:10px; border-radius:4px; margin-top:10px';
+            container.innerHTML = `<div style="font-size:0.6rem; margin-bottom:8px; color:var(--accent)">SCROLL TRIGGER</div>`;
+
+            const row = document.createElement('div');
+            row.style.display = 'flex';
+            row.style.gap = '8px';
+
+            const addBtn = document.createElement('button');
+            addBtn.className = 'btn-primary';
+            addBtn.textContent = '+ Parallax';
+            addBtn.onclick = () => {
+                if (!target.onUpdate) target.onUpdate = [];
+                target.onUpdate.push({ type: 'math', value: 'scroll * 0.1', target: 'style.translateY' });
+                renderProperties(obj, selectedPath);
+                sendToPreview();
+            };
+
+            row.appendChild(addBtn);
+            container.appendChild(row);
+            return container;
         }
 
         function createBoxModelUI(target, obj) {
@@ -1370,8 +1455,91 @@
                 builder.appendChild(cp);
                 wrap.appendChild(builder);
             }
-            // 5. Color Pickers
-            else if (key.includes('color') || key === 'background') {
+            // 5. Advanced Background & Gradient Builder
+            else if (key === 'background') {
+                const builder = document.createElement('div');
+                builder.style.cssText = 'display:flex; flex-direction:column; gap:8px; width:100%; padding:8px; background:rgba(255,255,255,0.02); border-radius:4px';
+
+                const typeSelect = document.createElement('select');
+                typeSelect.className = 'input-base';
+                typeSelect.innerHTML = `
+                    <option value="solid">Solid Color</option>
+                    <option value="linear">Linear Gradient</option>
+                    <option value="radial">Radial Gradient</option>
+                    <option value="animated">Animated Flux</option>
+                `;
+
+                const controls = document.createElement('div');
+                controls.style.display = 'flex';
+                controls.style.flexDirection = 'column';
+                controls.style.gap = '4px';
+
+                const updateBg = () => {
+                    const type = typeSelect.value;
+                    if (type === 'solid') {
+                        target[key] = color1.value;
+                    } else if (type === 'linear') {
+                        target[key] = `linear-gradient(${angle.value}deg, ${color1.value}, ${color2.value})`;
+                    } else if (type === 'radial') {
+                        target[key] = `radial-gradient(circle, ${color1.value}, ${color2.value})`;
+                    } else if (type === 'animated') {
+                        target[key] = `linear-gradient(math(time * 50 + ${angle.value})deg, ${color1.value}, ${color2.value})`;
+                    }
+                    input.value = target[key];
+                    sendToPreview();
+                };
+
+                const color1 = document.createElement('input'); color1.type = 'color'; color1.oninput = updateBg;
+                const color2 = document.createElement('input'); color2.type = 'color'; color2.oninput = updateBg;
+                const angle = document.createElement('input'); angle.type = 'range'; angle.min = 0; angle.max = 360; angle.oninput = updateBg;
+
+                typeSelect.onchange = () => {
+                    controls.innerHTML = '';
+                    if (typeSelect.value === 'solid') {
+                        controls.appendChild(color1);
+                    } else {
+                        controls.appendChild(color1);
+                        controls.appendChild(color2);
+                        if (typeSelect.value !== 'radial') controls.appendChild(angle);
+                    }
+                    updateBg();
+                };
+
+                const input = document.createElement('input');
+                input.className = 'input-base';
+                input.value = val || '';
+                input.oninput = () => { target[key] = input.value; sendToPreview(); };
+
+                builder.appendChild(typeSelect);
+                builder.appendChild(controls);
+                builder.appendChild(input);
+                wrap.appendChild(builder);
+
+                // Init based on value
+                if (val && val.includes('gradient')) {
+                    if (val.includes('radial')) typeSelect.value = 'radial';
+                    else if (val.includes('math')) typeSelect.value = 'animated';
+                    else typeSelect.value = 'linear';
+                }
+                typeSelect.onchange();
+            }
+            // 5b. Color Pickers (Solid) / Text Gradient Helper
+            else if (key.includes('color')) {
+                if (key === 'color') {
+                    const helper = document.createElement('button');
+                    helper.className = 'btn-primary';
+                    helper.style.cssText = 'font-size:0.5rem; padding:2px 6px; margin-bottom:4px';
+                    helper.textContent = '✨ Gradient Text';
+                    helper.onclick = () => {
+                        target['background'] = 'linear-gradient(90deg, #ff00ff, #00ffff)';
+                        target['-webkit-background-clip'] = 'text';
+                        target['-webkit-text-fill-color'] = 'transparent';
+                        renderProperties(obj, selectedPath);
+                        sendToPreview();
+                    };
+                    wrap.appendChild(helper);
+                }
+
                 const input = document.createElement('input');
                 input.className = 'input-base';
                 input.type = 'text';
